@@ -2,7 +2,7 @@
 
 ## Jounal
 
-### login journal
+### login journal 登录日志
 
 ```sql
 insert
@@ -25,7 +25,7 @@ from
   billboard.login_journal
 ```
 
-### browse journal
+### browse journal 浏览日志
 
 ```sql
 insert
@@ -48,7 +48,7 @@ from
   billboard.browse_journal
 ```
 
-### edit journal
+### edit journal 编辑日志
 
 ```sql
 insert
@@ -72,7 +72,7 @@ from
   billboard.edit_journal
 ```
 
-## Favorite
+## Favorite 收藏
 
 ```sql
 insert
@@ -95,7 +95,7 @@ from
   billboard.favorite
 ```
 
-## Feedback
+## Feedback 投诉与意见反馈
 
 ```sql
 insert
@@ -116,7 +116,7 @@ from
   billboard.feedback
 ```
 
-## Message
+## Message 消息
 
 ```sql
 insert
@@ -138,4 +138,23 @@ select
   , id
 from
   billboard.sys_message
+```
+
+## 平台用户
+
+```sql
+insert
+  into
+  ovaphlow.subscriber (username
+                       , detail
+                       , origin_id)
+select
+  username
+  , json_object("uuid", uuid
+                "tag", "平台"
+                , "name", name
+                , "password", password)
+  , id
+from
+  billboard.mis_user
 ```
