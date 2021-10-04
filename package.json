@@ -1,0 +1,17 @@
+{
+  "name": "crate",
+  "scripts": {
+    "serve": "node src/server",
+    "format": "npx prettier --write src",
+    "lint": "npx eslint src"
+  },
+  "author": "ovaphlow@live.com",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/router": "^10.1.1",
+    "koa": "^2.13.3",
+    "koa-bodyparser": "^4.3.0",
+    "mysql2": "^2.3.0",
+    "winston": "^3.3.3"
+  }
+}
