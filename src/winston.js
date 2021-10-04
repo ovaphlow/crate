@@ -15,7 +15,7 @@ const logger = winston.createLogger({
     }),
     new winston.transports.File({
       level: 'info',
-      filename: 'crate-error.log',
+      filename: 'crate-logbook.log',
       format: winston.format.json(),
     }),
   ],
