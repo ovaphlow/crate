@@ -1,14 +1,11 @@
 const Router = require('@koa/router');
 
-const pool = require('./mysql');
-
 const router = new Router({
   prefix: '/api/miscellaneous',
 });
 
 router.get('/journal', async (ctx) => {
   let option = ctx.request.query.option || '';
-  let client = pool.promise();
   if ('ref_id-tag-date' === option) {
     let sql = `
         select
@@ -27,7 +24,7 @@ router.get('/journal', async (ctx) => {
         order by id desc
         limit 100
         `;
-    let [result] = await client.query(sql, [
+    let [result] = await ctx.db_client.query(sql, [
       ctx.request.query.id,
       ctx.request.query.date_begin,
       ctx.request.query.date_end,

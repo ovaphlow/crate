@@ -2,6 +2,7 @@ const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
 
 const logger = require('./winston');
+const pool = require('./mysql');
 
 const app = new Koa();
 
@@ -13,6 +14,11 @@ app.use(async (ctx, next) => {
   logger.debug(`--> ${ctx.request.method} ${ctx.request.url}`);
   await next();
   logger.debug(`<-- ${ctx.request.method} ${ctx.request.url}`);
+});
+
+app.use(async (ctx, next) => {
+  ctx.db_client = pool.promise();
+  await next();
 });
 
 app.on('error', (err, ctx) => {

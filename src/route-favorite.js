@@ -1,14 +1,11 @@
 const Router = require('@koa/router');
 
-const pool = require('./mysql');
-
 const router = new Router({
   prefix: '/api/miscellaneous',
 });
 
 router.get('/favorite', async (ctx) => {
   let option = ctx.request.query.option || '';
-  let client = pool.promise();
   if ('ref_id-and-tag' === option) {
     let sql = `
         select
@@ -26,7 +23,7 @@ router.get('/favorite', async (ctx) => {
         order by id desc
         limit 100
         `;
-    let [result] = await client.query(sql, [ctx.request.query.id, ctx.request.query.tag]);
+    let [result] = await ctx.db_client.query(sql, [ctx.request.query.id, ctx.request.query.tag]);
     ctx.response.body = result;
   }
 });

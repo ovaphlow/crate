@@ -1,7 +1,5 @@
 const Router = require('@koa/router');
 
-const pool = require('./mysql');
-
 const router = new Router({
   prefix: '/api/miscellaneous',
 });
@@ -9,7 +7,6 @@ const router = new Router({
 router.put('/feedback/:id', async (ctx) => {
   const save = require('./repo-message').save;
   let option = ctx.request.query.option || '';
-  let client = pool.promise();
   if ('reply' === option) {
     let result = save(option, {
       id: ctx.request.body.user_id,
@@ -32,7 +29,7 @@ router.put('/feedback/:id', async (ctx) => {
                               '$.status', '已处理')
         where id = ?;
         `;
-    await client.query(sql, [parseInt(ctx.params.id, 10)]);
+    await ctx.db_client.query(sql, [parseInt(ctx.params.id, 10)]);
     ctx.response.status = 200;
   }
 });
@@ -53,8 +50,7 @@ router.get('/feedback', async (ctx) => {
       order by id desc
       limit 100
       `;
-  let client = pool.promise();
-  let [result] = await client.query(sql, [ctx.request.query.category]);
+  let [result] = await ctx.db_client.query(sql, [ctx.request.query.category]);
   ctx.response.body = result;
 });
 
