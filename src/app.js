@@ -45,6 +45,12 @@ app.on('error', (err, ctx) => {
 })();
 
 (() => {
+  let router = require('./route-setting');
+  app.use(router.routes());
+  app.use(router.allowedMethods());
+})();
+
+(() => {
   let router = require('./route-subscriber');
   app.use(router.routes());
   app.use(router.allowedMethods());

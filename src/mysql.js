@@ -6,7 +6,7 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: 'ovaphlow',
   waitForConnections: true,
-  connectionLimit: 8,
+  connectionLimit: parseInt(process.env.NODE_PROC, 10) * 2,
   queueLimit: 0,
 });
 

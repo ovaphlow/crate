@@ -158,3 +158,19 @@ select
 from
   billboard.mis_user
 ```
+
+## setting 基础数据
+
+```sql
+insert into ovaphlow.setting (category
+                              , ref_id
+                              , ref_id2
+                              , detail)
+select category
+  , master_id
+  , 0
+  , json_object('uuid', `uuid`
+                , 'name', name
+                , 'remark', comment)
+from billboard.common_data
+```
