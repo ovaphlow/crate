@@ -57,4 +57,29 @@ router.get('/journal', async (ctx) => {
   } else ctx.response.body = [];
 });
 
+router.post('/journal', async (ctx) => {
+  let sql = `
+      insert into logbook (ref_id
+                           , ref_id2
+                           , dtime
+                           , detail)
+      values(?
+             , ?
+             , now()
+             , json_object('category', ?
+                           , 'tag', ?
+                           , 'ref_uuid', ?
+                           , 'ref_uuid2', ?))
+      `;
+  let [result] = await ctx.db_client.execute(sql, [
+    ctx.request.body.ref_id,
+    ctx.request.body.ref_id2,
+    ctx.request.body.category,
+    ctx.request.body.tag,
+    ctx.request.body.ref_uuid,
+    ctx.request.body.ref_uuid2,
+  ]);
+  ctx.response.body = result;
+});
+
 module.exports = router;

@@ -27,7 +27,7 @@ app.on('error', (err, ctx) => {
 });
 
 (() => {
-  let router = require('./route-favorite');
+  let router = require('./favorite-route');
   app.use(router.routes());
   app.use(router.allowedMethods());
 })();
