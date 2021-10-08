@@ -51,13 +51,13 @@ app.on('error', (err, ctx) => {
 })();
 
 (() => {
-  let router = require('./route-setting');
+  let router = require('./setting-route');
   app.use(router.routes());
   app.use(router.allowedMethods());
 })();
 
 (() => {
-  let router = require('./route-subscriber');
+  let router = require('./subscriber-route');
   app.use(router.routes());
   app.use(router.allowedMethods());
 })();
