@@ -18,7 +18,7 @@ if (require.main === module) {
     });
 
     cluster.on('exit', (worker, code, signal) => {
-      logger.warn(`子进程 PID:${worker.process.pid}终止，错误代码:${code}，信号:${signal}`);
+      logger.error(`子进程 PID:${worker.process.pid}终止，错误代码:${code}，信号:${signal}`);
       logger.info(`由主进程(PID:${process.pid})创建新的子进程`);
       cluster.fork();
     });

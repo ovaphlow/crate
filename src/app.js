@@ -33,13 +33,19 @@ app.on('error', (err, ctx) => {
 })();
 
 (() => {
-  let router = require('./route-feedback');
+  let router = require('./feedback-route');
   app.use(router.routes());
   app.use(router.allowedMethods());
 })();
 
 (() => {
   let router = require('./route-journal');
+  app.use(router.routes());
+  app.use(router.allowedMethods());
+})();
+
+(() => {
+  let router = require('./message-route');
   app.use(router.routes());
   app.use(router.allowedMethods());
 })();
