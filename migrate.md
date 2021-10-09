@@ -39,8 +39,8 @@ select
   common_user_id
   , data_id
   , datime
-  , json_object("category", '浏览'
-                , "tag", category
+  , json_object("category", concat('浏览', category)
+                , "tag", '个人用户'
                 , "ref_uuid", common_user_uuid
                 , "ref_uuid2", data_uuid)
   , id

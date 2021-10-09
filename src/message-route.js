@@ -39,6 +39,8 @@ router.get('/message', async (ctx) => {
         from message
         where ref_id2 = ?
           and detail->>'$.tag' = ?
+        order by id desc
+        limit 20
         `;
     let [result] = await ctx.db_client.execute(sql, [
       parseInt(ctx.request.query.ref_id2 || 0, 10),
