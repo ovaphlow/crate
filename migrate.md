@@ -140,6 +140,35 @@ from
   billboard.sys_message
 ```
 
+````sql
+insert
+  into
+  ovaphlow.message (ref_id
+                    , ref_id2
+                    , dtime
+                    , detail
+                    , origin_id)
+select case when category = 'common_to_ent' then common_user_id
+            when category = 'ent_to_common' then ent_user_id
+            else 0
+            end ref_id
+  , case when category = 'common_to_ent' then ent_user_id
+         when category = 'ent_to_common' then common_user_id
+         else 0
+         end ref_id2
+  , datime
+  , json_object('category', '咨询企业'
+                , 'tag', case when category = 'common_to_ent' then '个人用户'
+                              when category = 'ent_to_common' then '企业用户'
+                              else ''
+                              end
+                , 'content', content
+                , 'status', status) detail
+  , id
+from billboard.message
+
+```
+
 ## 平台用户
 
 ```sql
@@ -157,7 +186,7 @@ select
   , id
 from
   billboard.mis_user
-```
+````
 
 ## setting 基础数据
 
