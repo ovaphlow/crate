@@ -4,6 +4,23 @@ const router = new Router({
   prefix: '/api/miscellaneous',
 });
 
+router.get('/message/:id', async (ctx) => {
+  let option = ctx.request.query.option || '';
+  if ('qty-by-ref_id2-status' === option) {
+    let sql = `
+        select count(*) qty
+        from message
+        where ref_id2 = ?
+          and detail->>'$.status' = ?
+        `;
+    let [result] = await ctx.db_client.execute(sql, [
+      parseInt(ctx.request.params.id, 10),
+      ctx.request.query.status,
+    ]);
+    ctx.response.body = result[0] || { qty: 0 };
+  }
+});
+
 router.put('/message/:id', async (ctx) => {
   let option = ctx.request.query.option || '';
   if ('status-by-ref_id2-and-tag' === option) {
