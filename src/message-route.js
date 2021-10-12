@@ -55,7 +55,29 @@ router.put('/message/:id', async (ctx) => {
 
 router.get('/message', async (ctx) => {
   let option = ctx.request.query.option || '';
-  if ('by-ref_id2-category-tag-status' === option) {
+  if ('by-ref_id2-tag' === option) {
+    let sql = `
+        select id
+          , ref_id
+          , ref_id2
+          , dtime
+          , detail->>'$.status' status
+          , detail->>'$.category' category
+          , detail->>'$.tag' tag
+          , detail->>'$.title' title
+          , detail->>'$.content' content
+        from message
+        where ref_id2 = ?
+          and detail->>'$.tag' = ?
+        order by id desc
+        limit 100
+        `;
+    let [result] = await ctx.db_client.execute(sql, [
+      parseInt(ctx.request.query.ref_id2, 10),
+      ctx.request.query.tag,
+    ]);
+    ctx.response.body = result;
+  } else if ('by-ref_id2-category-tag-status' === option) {
     let sql = `
         select id
           , ref_id
@@ -127,7 +149,7 @@ router.get('/message', async (ctx) => {
         where ref_id2 = ?
           and detail->>'$.tag' = ?
         order by id desc
-        limit 20
+        limit 100
         `;
     let [result] = await ctx.db_client.execute(sql, [
       parseInt(ctx.request.query.ref_id2 || 0, 10),
