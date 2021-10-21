@@ -27,6 +27,12 @@ app.on('error', (err, ctx) => {
 });
 
 (() => {
+  let router = require('./captcha-route');
+  app.use(router.routes());
+  app.use(router.allowedMethods());
+})();
+
+(() => {
   let router = require('./favorite-route');
   app.use(router.routes());
   app.use(router.allowedMethods());

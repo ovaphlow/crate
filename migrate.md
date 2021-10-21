@@ -203,3 +203,20 @@ select category
                 , 'remark', comment)
 from billboard.common_data
 ```
+
+## captcha 验证码
+
+```sql
+insert
+  into
+  ovaphlow.captcha (email
+                    , detail
+                    , origin_id)
+select email
+  , json_object("code", code
+                , "tag", user_category
+                , "datime", datime)
+  , id
+from
+  billboard.captcha
+```
