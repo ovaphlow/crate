@@ -1,12 +1,14 @@
 const mysql = require('mysql2');
 
+const CONFIGURATION = require('./configuration');
+
 const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: 'ovaphlow',
+  host: CONFIGURATION.DB_HOST,
+  user: CONFIGURATION.DB_USERNAME,
+  password: CONFIGURATION.DB_PASSWORD,
+  database: CONFIGURATION.DB_NAME,
   waitForConnections: true,
-  connectionLimit: parseInt(process.env.NODE_PROC, 10) * 2,
+  connectionLimit: CONFIGURATION.NODE_PROC * 2,
   queueLimit: 0,
 });
 
