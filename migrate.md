@@ -191,11 +191,13 @@ from
 ## setting 基础数据
 
 ```sql
-insert into ovaphlow.setting (category
+insert into ovaphlow.setting (id
+                              , category
                               , ref_id
                               , ref_id2
                               , detail)
-select category
+select id
+  , category
   , master_id
   , 0
   , json_object('uuid', `uuid`
