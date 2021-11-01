@@ -4,6 +4,27 @@ const router = new Router({
   prefix: '/api/miscellaneous',
 });
 
+router.get('/message/statistic', async (ctx) => {
+  let option = ctx.request.query.option || '';
+  if ('qty-by-ref_id2-category-tag-status' === option) {
+    let sql = `
+        select count(*) qty
+        from message
+        where ref_id2 = ?
+          and position(? in detail->>'$.category') > 0
+          and position(? in detail->>'$.tag') > 0
+          and position(? in detail->>'$.status') > 0
+        `;
+    let [result] = await ctx.db_client.execute(sql, [
+      parseInt(ctx.request.query.ref_id2, 10),
+      ctx.request.query.category,
+      ctx.request.query.tag,
+      ctx.request.query.status,
+    ]);
+    ctx.response.body = result[0];
+  }
+});
+
 router.get('/message/:id', async (ctx) => {
   let option = ctx.request.query.option || '';
   if ('qty-by-ref_id2-status' === option) {
@@ -13,10 +34,7 @@ router.get('/message/:id', async (ctx) => {
         where ref_id2 = ?
           and detail->>'$.status' = ?
         `;
-    let [result] = await ctx.db_client.execute(sql, [
-      parseInt(ctx.request.params.id, 10),
-      ctx.request.query.status,
-    ]);
+    let [result] = await ctx.db_client.execute(sql, [parseInt(ctx.request.params.id, 10), ctx.request.query.status]);
     ctx.response.body = result[0] || { qty: 0 };
   }
 });
@@ -45,10 +63,7 @@ router.put('/message/:id', async (ctx) => {
         where ref_id2 = ?
           and id in (${ctx.request.body.id_list})
         `;
-    let [result] = await ctx.db_client.execute(sql, [
-      ctx.request.body.status,
-      parseInt(ctx.params.id, 10),
-    ]);
+    let [result] = await ctx.db_client.execute(sql, [ctx.request.body.status, parseInt(ctx.params.id, 10)]);
     ctx.response.body = result;
   }
 });
@@ -72,10 +87,7 @@ router.get('/message', async (ctx) => {
         order by id desc
         limit 100
         `;
-    let [result] = await ctx.db_client.execute(sql, [
-      parseInt(ctx.request.query.ref_id2, 10),
-      ctx.request.query.tag,
-    ]);
+    let [result] = await ctx.db_client.execute(sql, [parseInt(ctx.request.query.ref_id2, 10), ctx.request.query.tag]);
     ctx.response.body = result;
   } else if ('by-ref_id2-category-tag-status' === option) {
     let sql = `
@@ -90,8 +102,8 @@ router.get('/message', async (ctx) => {
           , detail->>'$.content' content
         from message
         where ref_id2 = ?
-          and detail->>'$.category' = ?
-          and detail->>'$.tag' = ?
+          and position(? in detail->>'$.category') > 0
+          and position(? in detail->>'$.tag') > 0
           and position(? in detail->>'$.status') > 0
         limit 100
         `;
