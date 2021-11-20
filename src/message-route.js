@@ -168,6 +168,64 @@ router.get('/message', async (ctx) => {
       ctx.request.query.tag,
     ]);
     ctx.response.body = result;
+  } else if ('group-ref_id-by-ref_id2-tag-category-status' === option) {
+    // 指定接收方的已读/未读消息，按发送方分组，用于列表页
+    let sql = `
+    select ref_id, ref_id2, detail->>'$.tag' tag, detail->>'$.status' status, max(id) id
+      , (select dtime from ovaphlow.message t2 where t2.id = max(t.id)) dtime
+    from ovaphlow.message t
+    where ref_id2 = ? and detail->>'$.tag' = ?
+      and detail->>'$.category' = ?
+      and detail->>'$.status' = ?
+    group by ref_id
+    `;
+    let [result] = await ctx.db_client.execute(sql, [
+      parseInt(ctx.request.query.ref_id2 || 0, 10),
+      ctx.request.query.tag,
+      ctx.request.query.category,
+      ctx.request.query.status,
+    ]);
+    ctx.response.body = result;
+  } else if ('group-ref_id-by-ref_id2-tag-category-exclude_list' === option) {
+    // 指定接收方的已读未回消息(排除指定接收方的未读消息的ref_id)，按发送方分组，用于列表页
+    let sql = `
+    select ref_id, ref_id2, detail->>'$.tag' tag, detail->>'$.status' status
+      , max(id) id
+      , (select dtime from ovaphlow.message t2 where t2.id = max(t.id)) dtime
+    from ovaphlow.message t
+    where ref_id2 = ? and detail->>'$.tag' = ?
+      and detail->>'$.category' = ?
+      and ref_id not in (${ctx.request.query.list})
+    group by ref_id
+    order by dtime desc
+    limit 100
+    `;
+    let [result] = await ctx.db_client.execute(sql, [
+      parseInt(ctx.request.query.ref_id2 || 0, 10),
+      ctx.request.query.tag,
+      ctx.request.query.category,
+    ]);
+    ctx.response.body = result;
+  } else if ('group-ref_id2-by-ref_id-tag-category-exclude_list' === option) {
+    // 指定发送方的消息（排除指定接收方的ref_id列表），按接收方分组，用于列表页
+    let sql = `
+    select ref_id, ref_id2, detail->>'$.tag' tag, detail->>'$.status' status
+      , max(id) id
+      , (select dtime from ovaphlow.message t2 where t2.id = max(t.id)) dtime
+    from ovaphlow.message t
+    where ref_id = ? and detail->>'$.tag' = ?
+      and detail->>'$.category' = ?
+      and ref_id2 not in (${ctx.request.query.list})
+    group by ref_id2
+    order by dtime desc
+    limit 100
+    `;
+    let [result] = await ctx.db_client.execute(sql, [
+      parseInt(ctx.request.query.ref_id || 0, 10),
+      ctx.request.query.tag,
+      ctx.request.query.category,
+    ]);
+    ctx.response.body = result;
   }
 });
 
