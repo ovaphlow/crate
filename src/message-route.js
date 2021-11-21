@@ -173,6 +173,8 @@ router.get('/message', async (ctx) => {
     let sql = `
     select ref_id, ref_id2, detail->>'$.tag' tag, detail->>'$.status' status, max(id) id
       , (select dtime from ovaphlow.message t2 where t2.id = max(t.id)) dtime
+      , (select detail->>'$.content' from ovaphlow.message t2 where t2.id = max(t.id)) content
+      , count(*) as qty
     from ovaphlow.message t
     where ref_id2 = ? and detail->>'$.tag' = ?
       and detail->>'$.category' = ?
