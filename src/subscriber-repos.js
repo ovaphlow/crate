@@ -3,30 +3,50 @@ const { QueryTypes } = require('sequelize');
 const sequelize = require('./sequelize');
 
 module.exports = {
-  get: async (option) => {
+  get: async (option, data) => {
     if (option === '') {
       //
     } else if (option === 'for-auth') {
+      console.log(data);
       const sql = `
       select id, username, detail->>'$.password' password, detail->>'$.salt' salt
       from subscriber
-      where username = ?
+      where username = :username
       `;
       const result = await sequelize.query(sql, {
-        replacements: [],
+        replacements: data,
         type: QueryTypes.SELECT,
       });
       console.log(result);
-      return result;
+      const [row] = result;
+      return row;
     }
     return { id: 0 };
   },
-  signIn: async (data) => {
-    console.log(data);
+
+  filter: async (option, data) => {
+    if (option === '') {
+      //
+    } else if (option === 'by-username') {
+      const sql = `
+      select id, username, detail->>'$.password' password, detail->>'$.salt' salt
+      from subscriber
+      where username = :username
+      `;
+      const result = await sequelize.query(sql, {
+        replacements: data,
+        type: QueryTypes.SELECT,
+      });
+      return result;
+    }
+    return [];
+  },
+
+  signUp: async (data) => {
     const sql = `
     insert into
-      subscriber (id, ref_id, ref_id2, username, detail)
-      values (0, 0, 0, :username, json_build_object('password', :password, 'salt', :salt))
+      subscriber (username, detail)
+      values (:username, json_object('password', :password, 'salt', :salt))
     `;
     const result = await sequelize.query(sql, {
       replacements: data,

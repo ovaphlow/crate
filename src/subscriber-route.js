@@ -1,35 +1,58 @@
+const crypto = require('crypto');
+
 const Router = require('@koa/router');
 const uuidv5 = require('uuid').v5;
+const jose = require('jose');
 
-const configuration = require('./configuration');
+const { PRIVATE_KEY, SECRET } = require('./configuration');
+const repos = require('./subscriber-repos');
 
 const router = new Router({
   prefix: '/api/miscellaneous',
 });
 
 router.post('/subscriber/sign-in', async (ctx) => {
-  const sql = `
-  select
-    id
-    , username
-    , detail->>'$.name' name
-    , detail->>'$.uuid' uuid
-  from subscriber
-  where username = ?
-    and detail->>'$.password' = ?
-  `;
-  const [result] = await ctx.db_client.query(sql, [
-    ctx.request.body.username,
-    ctx.request.body.password,
-  ]);
-  ctx.response.body = result.length === 1 ? result[0] : {};
+  const { username } = ctx.request.body;
+  const user = await repos.get('for-auth', { username });
+  const { id } = user ?? { id: 0 };
+  if (id > 0) {
+    const hmac = crypto.createHmac('sha256', user.salt);
+    const { password } = ctx.request.body;
+    hmac.update(password);
+    const passwordSalted = hmac.digest('hex');
+    if (passwordSalted === user.password) {
+      const privateKey = await jose.importPKCS8(PRIVATE_KEY);
+      const jwt = await new jose.SignJWT({ id, username })
+        .setProtectedHeader({ alg: 'ES256' })
+        .setIssuedAt()
+        .setIssuer('https://ovaphlow.io')
+        .setAudience('ovaphlow:crate')
+        .setExpirationTime('168h')
+        .sign(privateKey);
+      ctx.response.body = jwt;
+    } else {
+      ctx.response.status = 401;
+    }
+  } else {
+    ctx.response.status = 401;
+  }
 });
 
 router.post('/subscriber/sign-up', async (ctx) => {
   // eslint-disable-next-line
-  const sql = `
-  `;
-  ctx.response.body = 'ok';
+  const { username } = ctx.request.body;
+  const result = await repos.filter('by-username', { username });
+  if (result.length > 0) {
+    ctx.response.status = 401;
+    return;
+  }
+  const salt = crypto.randomBytes(8).toString('hex');
+  const hmac = crypto.createHmac('sha256', salt);
+  const { password } = ctx.request.body;
+  hmac.update(password);
+  const passwordSalted = hmac.digest('hex');
+  const r = await repos.signUp({ username, password: passwordSalted, salt });
+  ctx.response.body = r;
 });
 
 router.get('/subscriber/:id', async (ctx) => {
@@ -120,7 +143,7 @@ router.post('/subscriber', async (ctx) => {
   [result] = await ctx.db_client.query(sql, [
     ctx.request.body.username,
     JSON.stringify({
-      uuid: uuidv5(ctx.request.body.username, Buffer.from(configuration.SECRET)),
+      uuid: uuidv5(ctx.request.body.username, Buffer.from(SECRET)),
       name: ctx.request.body.name,
       password: ctx.request.body.password,
       tag: ctx.request.body.tag,
