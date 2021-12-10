@@ -3,18 +3,24 @@
   "scripts": {
     "serve": "node src/server",
     "format": "npx prettier --write src",
-    "lint": "npx eslint src"
+    "lint": "eslint --fix src/*.js .eslintrc.js"
   },
   "author": "ovaphlow@live.com",
   "license": "ISC",
   "dependencies": {
     "@koa/router": "^10.1.1",
     "dayjs": "^1.10.7",
+    "jose": "^4.3.7",
     "koa": "^2.13.4",
     "koa-bodyparser": "^4.3.0",
-    "mysql2": "^2.3.2",
-    "nodemailer": "^6.7.0",
+    "mysql2": "^2.3.3",
+    "nodemailer": "^6.7.2",
     "uuid": "^8.3.2",
     "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.4.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3"
   }
 }

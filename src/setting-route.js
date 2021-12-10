@@ -5,9 +5,9 @@ const router = new Router({
 });
 
 router.get('/setting', async (ctx) => {
-  let option = ctx.request.query.option || '';
-  if ('by-category' === option) {
-    let sql = `
+  const option = ctx.request.query.option || '';
+  if (option === 'by-category') {
+    const sql = `
         select id
           , category
           , ref_id
@@ -17,10 +17,10 @@ router.get('/setting', async (ctx) => {
         from setting
         where category = ?
         `;
-    let [result] = await ctx.db_client.execute(sql, [ctx.request.query.category])
+    const [result] = await ctx.db_client.execute(sql, [ctx.request.query.category]);
     ctx.response.body = result;
-  } else if ('category' === option) {
-    let sql = `
+  } else if (option === 'category') {
+    const sql = `
       select id
         , category
         , ref_id
@@ -31,7 +31,7 @@ router.get('/setting', async (ctx) => {
       where category = ?
         and ref_id = 0
       `;
-    let [result] = await ctx.db_client.execute(sql, [ctx.request.query.category]);
+    const [result] = await ctx.db_client.execute(sql, [ctx.request.query.category]);
     ctx.response.body = result;
   }
 });

@@ -5,9 +5,9 @@ const router = new Router({
 });
 
 router.get('/journal', async (ctx) => {
-  let option = ctx.request.query.option || '';
-  if ('by-ref_id-tag' === option) {
-    let sql = `
+  const option = ctx.request.query.option || '';
+  if (option === 'by-ref_id-tag') {
+    const sql = `
         select
           id
           , ref_id
@@ -24,13 +24,13 @@ router.get('/journal', async (ctx) => {
         order by id desc
         limit 10
         `;
-    let [result] = await ctx.db_client.execute(sql, [
+    const [result] = await ctx.db_client.execute(sql, [
       parseInt(ctx.request.query.ref_id || 0, 10),
       ctx.request.query.tag || '',
     ]);
     ctx.response.body = result;
-  } else if ('by-ref_id-category-tag' === option) {
-    let sql = `
+  } else if (option === 'by-ref_id-category-tag') {
+    const sql = `
         select id
           , ref_id
           , ref_id2
@@ -47,14 +47,14 @@ router.get('/journal', async (ctx) => {
         order by id desc
         limit 20
         `;
-    let [result] = await ctx.db_client.execute(sql, [
+    const [result] = await ctx.db_client.execute(sql, [
       parseInt(ctx.request.query.ref_id, 10),
       ctx.request.query.category || '',
       ctx.request.query.tag || '',
     ]);
     ctx.response.body = result;
-  } else if ('ref_id-tag-date' === option) {
-    let sql = `
+  } else if (option === 'ref_id-tag-date') {
+    const sql = `
         select
           id
           , ref_id
@@ -71,7 +71,7 @@ router.get('/journal', async (ctx) => {
         order by id desc
         limit 100
         `;
-    let [result] = await ctx.db_client.query(sql, [
+    const [result] = await ctx.db_client.query(sql, [
       ctx.request.query.id,
       ctx.request.query.date_begin,
       ctx.request.query.date_end,
@@ -82,7 +82,7 @@ router.get('/journal', async (ctx) => {
 });
 
 router.post('/journal', async (ctx) => {
-  let sql = `
+  const sql = `
       insert into logbook (ref_id
                            , ref_id2
                            , dtime
@@ -95,7 +95,7 @@ router.post('/journal', async (ctx) => {
                            , 'ref_uuid', ?
                            , 'ref_uuid2', ?))
       `;
-  let [result] = await ctx.db_client.execute(sql, [
+  const [result] = await ctx.db_client.execute(sql, [
     ctx.request.body.ref_id,
     ctx.request.body.ref_id2,
     ctx.request.body.category,

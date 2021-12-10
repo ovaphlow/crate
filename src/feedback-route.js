@@ -5,10 +5,10 @@ const router = new Router({
 });
 
 router.put('/feedback/:id', async (ctx) => {
-  const save = require('./message-repos').save;
-  let option = ctx.request.query.option || '';
-  if ('reply' === option) {
-    let result = save(option, {
+  const { save } = require('./message-repos');
+  const option = ctx.request.query.option || '';
+  if (option === 'reply') {
+    const result = save(option, {
       id: ctx.request.body.user_id,
       dtime: ctx.request.body.datime,
       detail: JSON.stringify({
@@ -23,7 +23,7 @@ router.put('/feedback/:id', async (ctx) => {
       ctx.response.status = 500;
       return;
     }
-    let sql = `
+    const sql = `
         update feedback
         set detail = json_set(detail
                               , '$.status', '已处理')
@@ -35,9 +35,9 @@ router.put('/feedback/:id', async (ctx) => {
 });
 
 router.get('/feedback', async (ctx) => {
-  let option = ctx.request.query.option || '';
-  if ('' === option) {
-    let sql = `
+  const option = ctx.request.query.option || '';
+  if (option === '') {
+    const sql = `
         select
           id
           , ref_id user_id 
@@ -52,10 +52,10 @@ router.get('/feedback', async (ctx) => {
         order by id desc
         limit 100
         `;
-    let [result] = await ctx.db_client.query(sql, [ctx.request.query.category]);
+    const [result] = await ctx.db_client.query(sql, [ctx.request.query.category]);
     ctx.response.body = result;
-  } else if ('by-employer_id-and-tag' === option) {
-    let sql = `
+  } else if (option === 'by-employer_id-and-tag') {
+    const sql = `
         select
           id
           , ref_id 
@@ -71,13 +71,13 @@ router.get('/feedback', async (ctx) => {
         order by id desc
         limit 10
         `;
-    let [result] = await ctx.db_client.execute(sql, [
+    const [result] = await ctx.db_client.execute(sql, [
       parseInt(ctx.request.query.id || 0, 10),
       ctx.request.query.tag || '',
     ]);
     ctx.response.body = result;
-  } else if ('by-ref_id-tag' === option) {
-    let sql = `
+  } else if (option === 'by-ref_id-tag') {
+    const sql = `
         select
           id
           , ref_id 
@@ -93,7 +93,7 @@ router.get('/feedback', async (ctx) => {
         order by id desc
         limit 20
         `;
-    let [result] = await ctx.db_client.execute(sql, [
+    const [result] = await ctx.db_client.execute(sql, [
       parseInt(ctx.request.query.ref_id, 10),
       ctx.request.query.tag || '',
     ]);
@@ -102,14 +102,14 @@ router.get('/feedback', async (ctx) => {
 });
 
 router.post('/feedback', async (ctx) => {
-  let sql = `
+  const sql = `
       insert into feedback (ref_id, dtime, detail)
         values(?, ?, json_object("ref_uuid", ?
                                  , "category", ?
                                  , "tag", ?
                                  , "content", ?))
       `;
-  let [result] = await ctx.db_client.execute(sql, [
+  const [result] = await ctx.db_client.execute(sql, [
     ctx.request.body.user_id,
     ctx.request.body.datime,
     ctx.request.body.user_uuid,

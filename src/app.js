@@ -27,43 +27,43 @@ app.on('error', (err, ctx) => {
 });
 
 (() => {
-  let router = require('./captcha-route');
+  const router = require('./captcha-route');
   app.use(router.routes());
   app.use(router.allowedMethods());
 })();
 
 (() => {
-  let router = require('./favorite-route');
+  const router = require('./favorite-route');
   app.use(router.routes());
   app.use(router.allowedMethods());
 })();
 
 (() => {
-  let router = require('./feedback-route');
+  const router = require('./feedback-route');
   app.use(router.routes());
   app.use(router.allowedMethods());
 })();
 
 (() => {
-  let router = require('./journal-route');
+  const router = require('./journal-route');
   app.use(router.routes());
   app.use(router.allowedMethods());
 })();
 
 (() => {
-  let router = require('./message-route');
+  const router = require('./message-route');
   app.use(router.routes());
   app.use(router.allowedMethods());
 })();
 
 (() => {
-  let router = require('./setting-route');
+  const router = require('./setting-route');
   app.use(router.routes());
   app.use(router.allowedMethods());
 })();
 
 (() => {
-  let router = require('./subscriber-route');
+  const router = require('./subscriber-route');
   app.use(router.routes());
   app.use(router.allowedMethods());
 })();

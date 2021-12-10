@@ -2,9 +2,9 @@ const pool = require('./mysql');
 
 module.exports = {
   filter: async (option, data) => {
-    let client = pool.promise();
-    if ('check-by-email-code' === option) {
-      let sql = `
+    const client = pool.promise();
+    if (option === 'check-by-email-code') {
+      const sql = `
           select id
           from captcha
           where email = ?
@@ -12,14 +12,15 @@ module.exports = {
           order by id desc
           limit 1
           `;
-      let [result] = await client.query(sql, [data.email, data.code]);
+      const [result] = await client.query(sql, [data.email, data.code]);
       return result.length === 1 ? result[0].id : 0;
     }
+    return { id: 0 };
   },
 
   save: async (data) => {
-    let client = pool.promise();
-    let sql = `
+    const client = pool.promise();
+    const sql = `
         insert into captcha (email
                              , detail)
         values(?
@@ -27,7 +28,7 @@ module.exports = {
                              , 'code', ?
                              , 'datime', ?))
         `;
-    let [result] = await client.query(sql, [
+    const [result] = await client.query(sql, [
       data.email,
       data.tag,
       data.code,

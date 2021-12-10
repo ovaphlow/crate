@@ -5,15 +5,15 @@ const router = new Router({
 });
 
 router.delete('/favorite/:id', async (ctx) => {
-  let sql = 'delete from favorite where id = ?';
-  let [result] = await ctx.db_client.execute(sql, [parseInt(ctx.params.id, 10)]);
+  const sql = 'delete from favorite where id = ?';
+  const [result] = await ctx.db_client.execute(sql, [parseInt(ctx.params.id, 10)]);
   ctx.response.body = result;
 });
 
 router.get('/favorite', async (ctx) => {
-  let option = ctx.request.query.option || '';
-  if ('ref_id-and-tag' === option) {
-    let sql = `
+  const option = ctx.request.query.option || '';
+  if (option === 'ref_id-and-tag') {
+    const sql = `
         select
           id
           , ref_id
@@ -29,10 +29,10 @@ router.get('/favorite', async (ctx) => {
         order by id desc
         limit 100
         `;
-    let [result] = await ctx.db_client.query(sql, [ctx.request.query.id, ctx.request.query.tag]);
+    const [result] = await ctx.db_client.query(sql, [ctx.request.query.id, ctx.request.query.tag]);
     ctx.response.body = result;
-  } else if ('by-ref_id-category-tag' === option) {
-    let sql = `
+  } else if (option === 'by-ref_id-category-tag') {
+    const sql = `
         select id
           , ref_id
           , ref_id2 
@@ -48,14 +48,14 @@ router.get('/favorite', async (ctx) => {
         order by id desc
         limit 100
         `;
-    let [result] = await ctx.db_client.execute(sql, [
+    const [result] = await ctx.db_client.execute(sql, [
       parseInt(ctx.request.query.ref_id, 10),
       ctx.request.query.category,
       ctx.request.query.tag,
     ]);
     ctx.response.body = result;
-  } else if ('by-ref_id-ref_id2-category-tag' === option) {
-    let sql = `
+  } else if (option === 'by-ref_id-ref_id2-category-tag') {
+    const sql = `
         select
           id
           , ref_id
@@ -71,7 +71,7 @@ router.get('/favorite', async (ctx) => {
           and detail->>'$.category' = ?
           and detail->>'$.tag' = ?
         `;
-    let [result] = await ctx.db_client.execute(sql, [
+    const [result] = await ctx.db_client.execute(sql, [
       parseInt(ctx.request.query.ref_id, 10),
       parseInt(ctx.request.query.ref_id2, 10),
       ctx.request.query.category,
@@ -82,7 +82,7 @@ router.get('/favorite', async (ctx) => {
 });
 
 router.post('/favorite', async (ctx) => {
-  let sql = `
+  const sql = `
       insert into favorite (ref_id
                             , ref_id2
                             , dtime
@@ -95,7 +95,7 @@ router.post('/favorite', async (ctx) => {
                            , 'ref_uuid', ?
                            , 'ref_uuid2', ?))
       `;
-  let [result] = await ctx.db_client.execute(sql, [
+  const [result] = await ctx.db_client.execute(sql, [
     parseInt(ctx.request.body.ref_id || 0, 10),
     parseInt(ctx.request.body.ref_id2 || 0, 10),
     ctx.request.body.category,

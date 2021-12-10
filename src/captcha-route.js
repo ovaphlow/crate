@@ -4,22 +4,23 @@ const nodemailer = require('nodemailer');
 
 const repos = require('./captcha-repos');
 const CONFIGURATION = require('./configuration');
+const logger = require('./winston');
 
 const router = new Router({
   prefix: '/api/miscellaneous',
 });
 
 router.get('/captcha', async (ctx) => {
-  let option = ctx.request.query.option || '';
-  if ('check-by-email-code' === option) {
-    let r = await repos.filter(option, ctx.request.query);
+  const option = ctx.request.query.option || '';
+  if (option === 'check-by-email-code') {
+    const r = await repos.filter(option, ctx.request.query);
     if (r) ctx.response.status = 200;
     else ctx.response.status = 401;
   }
 });
 
 router.post('/captcha', async (ctx) => {
-  let r = Math.floor(Math.random() * (999999 - 100000) + 100000);
+  const r = Math.floor(Math.random() * (999999 - 100000) + 100000);
 
   repos.save({
     email: ctx.request.body.email || '',
@@ -45,7 +46,7 @@ router.post('/captcha', async (ctx) => {
   };
   transporter.sendMail(mailOptions, (err) => {
     if (err) {
-      logger.error(error);
+      logger.error(err);
     }
   });
 

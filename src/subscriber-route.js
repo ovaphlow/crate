@@ -8,7 +8,7 @@ const router = new Router({
 });
 
 router.post('/subscriber/sign-in', async (ctx) => {
-  let sql = `
+  const sql = `
       select
         id
         , username
@@ -18,7 +18,7 @@ router.post('/subscriber/sign-in', async (ctx) => {
       where username = ?
         and detail->>'$.password' = ?
       `;
-  let [result] = await ctx.db_client.query(sql, [
+  const [result] = await ctx.db_client.query(sql, [
     ctx.request.body.username,
     ctx.request.body.password,
   ]);
@@ -26,7 +26,7 @@ router.post('/subscriber/sign-in', async (ctx) => {
 });
 
 router.get('/subscriber/:id', async (ctx) => {
-  let sql = `
+  const sql = `
       select
         id
         , username
@@ -36,7 +36,7 @@ router.get('/subscriber/:id', async (ctx) => {
       where id = ?
         and detail->>'$.uuid' = ?
       `;
-  let [result] = await ctx.db_client.query(sql, [
+  const [result] = await ctx.db_client.query(sql, [
     parseInt(ctx.params.id, 10),
     ctx.request.query.uuid,
   ]);
@@ -44,7 +44,7 @@ router.get('/subscriber/:id', async (ctx) => {
 });
 
 router.put('/subscriber/:id', async (ctx) => {
-  let sql = `
+  const sql = `
       update subscriber
       set username = ?
         , detail = json_set(detail
@@ -52,7 +52,7 @@ router.put('/subscriber/:id', async (ctx) => {
       where id = ?
         and detail->>'$.uuid' = ?
       `;
-  let [result] = await ctx.db_client.query(sql, [
+  const [result] = await ctx.db_client.query(sql, [
     ctx.request.body.username,
     ctx.request.body.name,
     parseInt(ctx.params.id, 10),
@@ -62,12 +62,12 @@ router.put('/subscriber/:id', async (ctx) => {
 });
 
 router.delete('/subscriber/:id', async (ctx) => {
-  let sql = `
+  const sql = `
       delete from subscriber
       where id = ?
         and detail->>'$.uuid' = ?
       `;
-  let [result] = await ctx.db_client.query(sql, [
+  const [result] = await ctx.db_client.query(sql, [
     parseInt(ctx.params.id, 10),
     ctx.request.query.uuid || '',
   ]);
@@ -75,9 +75,9 @@ router.delete('/subscriber/:id', async (ctx) => {
 });
 
 router.get('/subscriber', async (ctx) => {
-  let option = ctx.request.query.option || '';
-  if ('tag' === option) {
-    let sql = `
+  const option = ctx.request.query.option || '';
+  if (option === 'tag') {
+    const sql = `
         select
           id
           , username
@@ -88,7 +88,7 @@ router.get('/subscriber', async (ctx) => {
         order by id desc
         limit 20
         `;
-    let [result] = await ctx.db_client.query(sql, [ctx.request.query.tag]);
+    const [result] = await ctx.db_client.query(sql, [ctx.request.query.tag]);
     ctx.response.body = result;
   } else ctx.response.body = [];
 });

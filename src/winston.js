@@ -9,14 +9,20 @@ const logger = winston.createLogger({
         winston.format.label({ label: 'crate' }),
         winston.format.timestamp(),
         winston.format.printf(
-          ({ level, message, label, timestamp }) => `${timestamp} [${label}] ${level}: ${message}`,
+          ({
+            level, message, label, timestamp,
+          }) => `${timestamp} [${label}] ${level}: ${message}`,
         ),
       ),
     }),
     new winston.transports.File({
       level: 'info',
-      filename: 'crate-logbook.log',
-      format: winston.format.json(),
+      filename: 'crate.log',
+      format: winston.format.combine(
+        winston.format.label({ label: 'crate' }),
+        winston.format.timestamp(),
+        winston.format.json(),
+      ),
     }),
   ],
 });
