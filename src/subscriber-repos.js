@@ -1,19 +1,23 @@
-const pool = require('./mysql');
+const { QueryTypes } = require('sequelize');
+
+const sequelize = require('./sequelize');
 
 module.exports = {
-  get: async (option, data) => {
-    const client = pool.promise();
+  get: async (option) => {
     if (option === '') {
       //
-    } else if (option === 'auth') {
+    } else if (option === 'for-auth') {
       const sql = `
       select id, username, detail->>'$.password' password, detail->>'$.salt' salt
       from subscriber
       where username = ?
       `;
-      const [result] = await client.query(sql, [data.username]);
-      const [row] = result;
-      return row;
+      const result = await sequelize.query(sql, {
+        replacements: [],
+        type: QueryTypes.SELECT,
+      });
+      console.log(result);
+      return result;
     }
     return { id: 0 };
   },

@@ -12,5 +12,6 @@ module.exports = {
   },
   rules: {
     'global-require': 0,
+    'no-console': 0,
   },
 };
