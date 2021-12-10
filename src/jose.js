@@ -7,8 +7,10 @@ async function jwtMethod() {
   // eslint-disable-next-line
   console.log(privateKey);
   const pubk = await jose.exportSPKI(publicKey);
+  // eslint-disable-next-line
   console.log('pubk', pubk);
   const prik = await jose.exportPKCS8(privateKey);
+  // eslint-disable-next-line
   console.log('prik', prik);
 
   const jwt = await new jose.SignJWT({ id: 1123, upn: 'ovaphlow@live.com' })
