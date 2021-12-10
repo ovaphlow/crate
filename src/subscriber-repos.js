@@ -21,4 +21,17 @@ module.exports = {
     }
     return { id: 0 };
   },
+  signIn: async (data) => {
+    console.log(data);
+    const sql = `
+    insert into
+      subscriber (id, ref_id, ref_id2, username, detail)
+      values (0, 0, 0, :username, json_build_object('password', :password, 'salt', :salt))
+    `;
+    const result = await sequelize.query(sql, {
+      replacements: data,
+      type: QueryTypes.INSERT,
+    });
+    return result;
+  },
 };
