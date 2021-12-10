@@ -9,20 +9,27 @@ const router = new Router({
 
 router.post('/subscriber/sign-in', async (ctx) => {
   const sql = `
-      select
-        id
-        , username
-        , detail->>'$.name' name
-        , detail->>'$.uuid' uuid
-      from subscriber
-      where username = ?
-        and detail->>'$.password' = ?
-      `;
+  select
+    id
+    , username
+    , detail->>'$.name' name
+    , detail->>'$.uuid' uuid
+  from subscriber
+  where username = ?
+    and detail->>'$.password' = ?
+  `;
   const [result] = await ctx.db_client.query(sql, [
     ctx.request.body.username,
     ctx.request.body.password,
   ]);
   ctx.response.body = result.length === 1 ? result[0] : {};
+});
+
+router.post('/subscriber/sign-up', async (ctx) => {
+  // eslint-disable-next-line
+  const sql = `
+  `;
+  ctx.response.body = 'ok';
 });
 
 router.get('/subscriber/:id', async (ctx) => {
