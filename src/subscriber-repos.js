@@ -45,8 +45,8 @@ module.exports = {
   signUp: async (data) => {
     const sql = `
     insert into
-      subscriber (username, detail)
-      values (:username, json_object('password', :password, 'salt', :salt))
+      subscriber (id, username, detail)
+      values (:id, :username, json_object('password', :password, 'salt', :salt))
     `;
     const result = await sequelize.query(sql, {
       replacements: data,

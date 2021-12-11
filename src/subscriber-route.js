@@ -3,13 +3,33 @@ const crypto = require('crypto');
 const Router = require('@koa/router');
 const uuidv5 = require('uuid').v5;
 const jose = require('jose');
+const FlakeId = require('flake-idgen');
 
-const { PRIVATE_KEY, SECRET } = require('./configuration');
+const {
+  DATACENTER_ID,
+  WORKER_ID,
+  EPOCH,
+  PRIVATE_KEY,
+  PUBLIC_KEY,
+  SECRET,
+} = require('./configuration');
 const repos = require('./subscriber-repos');
 
 const router = new Router({
   prefix: '/api/miscellaneous',
 });
+
+async function signJWT(data) {
+  const privateKey = await jose.importPKCS8(PRIVATE_KEY);
+  const jwt = await new jose.SignJWT(data)
+    .setProtectedHeader({ alg: 'ES256' })
+    .setIssuedAt()
+    .setIssuer('https://ovaphlow.io')
+    .setAudience('ovaphlow:crate')
+    .setExpirationTime('168h')
+    .sign(privateKey);
+  return jwt;
+}
 
 router.post('/subscriber/sign-in', async (ctx) => {
   const { username } = ctx.request.body;
@@ -21,14 +41,7 @@ router.post('/subscriber/sign-in', async (ctx) => {
     hmac.update(password);
     const passwordSalted = hmac.digest('hex');
     if (passwordSalted === user.password) {
-      const privateKey = await jose.importPKCS8(PRIVATE_KEY);
-      const jwt = await new jose.SignJWT({ id, username })
-        .setProtectedHeader({ alg: 'ES256' })
-        .setIssuedAt()
-        .setIssuer('https://ovaphlow.io')
-        .setAudience('ovaphlow:crate')
-        .setExpirationTime('168h')
-        .sign(privateKey);
+      const jwt = await signJWT({ id, username });
       ctx.response.body = jwt;
     } else {
       ctx.response.status = 401;
@@ -39,7 +52,6 @@ router.post('/subscriber/sign-in', async (ctx) => {
 });
 
 router.post('/subscriber/sign-up', async (ctx) => {
-  // eslint-disable-next-line
   const { username } = ctx.request.body;
   const result = await repos.filter('by-username', { username });
   if (result.length > 0) {
@@ -51,21 +63,41 @@ router.post('/subscriber/sign-up', async (ctx) => {
   const { password } = ctx.request.body;
   hmac.update(password);
   const passwordSalted = hmac.digest('hex');
-  const r = await repos.signUp({ username, password: passwordSalted, salt });
-  ctx.response.body = r;
+  const flakeIdGen = new FlakeId({ datacenter: DATACENTER_ID, worker: WORKER_ID, epoch: EPOCH });
+  const fid = flakeIdGen.next();
+  const r = await repos.signUp({
+    id: fid.readBigInt64BE(0).toString(),
+    username,
+    password: passwordSalted,
+    salt,
+  });
+  const [id] = r;
+  const jwt = await signJWT({ id, username });
+  ctx.response.body = jwt;
+});
+
+router.post('/subscriber/refresh-token', async (ctx) => {
+  const jwt = ctx.request.header.authorization.replace('Bearer ', '');
+  const publicKey = await jose.importSPKI(PUBLIC_KEY);
+  const result = await jose.jwtVerify(jwt, publicKey, {
+    issuer: 'https://ovaphlow.io',
+    audience: 'ovaphlow:crate',
+  });
+  const { id, username } = result.payload;
+  const freshJWT = await signJWT({ id, username });
+  ctx.response.body = freshJWT;
 });
 
 router.get('/subscriber/:id', async (ctx) => {
   const sql = `
-      select
-        id
-        , username
-        , detail->>'$.name' name
-        , detail->>'$.uuid' uuid
-      from subscriber
-      where id = ?
-        and detail->>'$.uuid' = ?
-      `;
+  select id
+    , username
+    , detail->>'$.name' name
+    , detail->>'$.uuid' uuid
+  from subscriber
+  where id = ?
+    and detail->>'$.uuid' = ?
+  `;
   const [result] = await ctx.db_client.query(sql, [
     parseInt(ctx.params.id, 10),
     ctx.request.query.uuid,
@@ -75,13 +107,12 @@ router.get('/subscriber/:id', async (ctx) => {
 
 router.put('/subscriber/:id', async (ctx) => {
   const sql = `
-      update subscriber
-      set username = ?
-        , detail = json_set(detail
-                            , '$.name', ?)
-      where id = ?
-        and detail->>'$.uuid' = ?
-      `;
+  update subscriber
+  set username = ?
+    , detail = json_set(detail, '$.name', ?)
+  where id = ?
+    and detail->>'$.uuid' = ?
+  `;
   const [result] = await ctx.db_client.query(sql, [
     ctx.request.body.username,
     ctx.request.body.name,
@@ -93,10 +124,10 @@ router.put('/subscriber/:id', async (ctx) => {
 
 router.delete('/subscriber/:id', async (ctx) => {
   const sql = `
-      delete from subscriber
-      where id = ?
-        and detail->>'$.uuid' = ?
-      `;
+  delete from subscriber
+  where id = ?
+    and detail->>'$.uuid' = ?
+  `;
   const [result] = await ctx.db_client.query(sql, [
     parseInt(ctx.params.id, 10),
     ctx.request.query.uuid || '',
@@ -108,16 +139,16 @@ router.get('/subscriber', async (ctx) => {
   const option = ctx.request.query.option || '';
   if (option === 'tag') {
     const sql = `
-        select
-          id
-          , username
-          , detail->>'$.name' name
-          , detail->>'$.uuid' uuid
-        from subscriber
-        where detail->>'$.tag' = ?
-        order by id desc
-        limit 20
-        `;
+    select
+      id
+      , username
+      , detail->>'$.name' name
+      , detail->>'$.uuid' uuid
+    from subscriber
+    where detail->>'$.tag' = ?
+    order by id desc
+    limit 20
+    `;
     const [result] = await ctx.db_client.query(sql, [ctx.request.query.tag]);
     ctx.response.body = result;
   } else ctx.response.body = [];
@@ -125,21 +156,16 @@ router.get('/subscriber', async (ctx) => {
 
 router.post('/subscriber', async (ctx) => {
   let sql = `
-      select count(*) qty
-      from subscriber
-      where username = ?
-      `;
+  select count(*) qty from subscriber where username = ?
+  `;
   let [result] = await ctx.db_client.query(sql, [ctx.request.body.username]);
   if (result[0].qty !== 0) {
     ctx.response.status = 401;
     return;
   }
   sql = `
-      insert
-        into subscriber (username
-                         , detail)
-        values(?, ?)
-      `;
+  insert into subscriber (username, detail) values(?, ?)
+  `;
   [result] = await ctx.db_client.query(sql, [
     ctx.request.body.username,
     JSON.stringify({
