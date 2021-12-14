@@ -61,12 +61,11 @@ router.put('/message/:id', async (ctx) => {
     ctx.response.body = result;
   } else if (option === 'status-by-id_list') {
     const sql = `
-        update message
-        set detail = json_set(detail
-                              , '$.status', ?)
-        where ref_id2 = ?
-          and id in (${ctx.request.body.id_list})
-        `;
+    update message
+    set detail = json_set(detail, '$.status', ?)
+    where ref_id2 = ?
+      and id in (${ctx.request.body.id_list})
+    `;
     const [result] = await ctx.db_client.execute(sql, [
       ctx.request.body.status,
       parseInt(ctx.params.id, 10),

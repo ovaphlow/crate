@@ -1,6 +1,8 @@
 const cluster = require('cluster');
 const http = require('http');
 
+require('dotenv').config();
+
 const app = require('./app');
 const logger = require('./winston');
 
