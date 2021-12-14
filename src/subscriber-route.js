@@ -13,7 +13,7 @@ const {
   PUBLIC_KEY,
   SECRET,
 } = require('./configuration');
-const repos = require('./subscriber-repos');
+const repos = require('./subscriber-repository');
 
 const router = new Router({
   prefix: '/api/miscellaneous',

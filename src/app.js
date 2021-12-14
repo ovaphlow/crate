@@ -1,3 +1,8 @@
+const cluster = require('cluster');
+
+// eslint-disable-next-line
+if (cluster.isMaster) return;
+
 const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
 

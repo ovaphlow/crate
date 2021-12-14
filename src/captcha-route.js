@@ -2,7 +2,7 @@ const Router = require('@koa/router');
 const dayjs = require('dayjs');
 const nodemailer = require('nodemailer');
 
-const repos = require('./captcha-repos');
+const repos = require('./captcha-repository');
 const CONFIGURATION = require('./configuration');
 const logger = require('./winston');
 

@@ -5,7 +5,7 @@ const router = new Router({
 });
 
 router.put('/feedback/:id', async (ctx) => {
-  const { save } = require('./message-repos');
+  const { save } = require('./message-repository');
   const option = ctx.request.query.option || '';
   if (option === 'reply') {
     const result = save(option, {
