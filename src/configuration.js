@@ -1,12 +1,11 @@
 module.exports = {
   SECRET: 'ovaphlow-=CRAT=-',
 
-  NODE_PROC: parseInt(process.env.NODE_PROC || 1, 10),
+  NODE_PROC: parseInt(process.env.PROC || 1, 10),
 
   DATACENTER_ID: 3420,
   WORKER_ID: 3420,
   EPOCH: 1639191301218,
-
   DB_HOST: process.env.DB_HOST || '127.0.0.1',
   DB_USERNAME: process.env.DB_USERNAME || 'root',
   DB_PASSWORD: process.env.DB_PASSWORD || '',

@@ -1,3 +1,4 @@
+// @flow
 const jose = require('jose');
 
 async function jwtMethod() {

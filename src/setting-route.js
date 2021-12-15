@@ -8,15 +8,15 @@ router.get('/setting', async (ctx) => {
   const option = ctx.request.query.option || '';
   if (option === 'by-category') {
     const sql = `
-        select id
-          , category
-          , ref_id
-          , ref_id2
-          , detail->>'$.uuid' uuid
-          , detail->>'$.name' name
-        from setting
-        where category = ?
-        `;
+    select id
+      , category
+      , ref_id
+      , ref_id2
+      , detail->>'$.uuid' uuid
+      , detail->>'$.name' name
+    from setting
+    where category = ?
+    `;
     const [result] = await ctx.db_client.execute(sql, [ctx.request.query.category]);
     ctx.response.body = result;
   } else if (option === 'category') {

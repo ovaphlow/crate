@@ -1,6 +1,7 @@
+// @flow
 const winston = require('winston');
 
-const logger = winston.createLogger({
+const logger /*: any */ = winston.createLogger({
   transports: [
     new winston.transports.Console({
       level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',

@@ -1,3 +1,4 @@
+// @flow
 const cluster = require('cluster');
 
 const logger = require('./winston');

@@ -1,3 +1,4 @@
+// @flow
 const os = require('os');
 
 const { Sequelize } = require('sequelize');
@@ -10,7 +11,7 @@ const {
   DB_HOST,
 } = require('./configuration');
 
-const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
+const sequelize /*: any */ = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
   host: DB_HOST,
   dialect: 'mysql',
   pool: {

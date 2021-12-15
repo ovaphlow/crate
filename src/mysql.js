@@ -1,8 +1,9 @@
+// @flow
 const mysql = require('mysql2');
 
 const CONFIGURATION = require('./configuration');
 
-const pool = mysql.createPool({
+const pool /*: any */ = mysql.createPool({
   host: CONFIGURATION.DB_HOST,
   user: CONFIGURATION.DB_USERNAME,
   password: CONFIGURATION.DB_PASSWORD,
