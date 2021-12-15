@@ -3,7 +3,7 @@ const dayjs = require('dayjs');
 const nodemailer = require('nodemailer');
 
 const repos = require('./captcha-repository');
-const CONFIGURATION = require('./configuration');
+const { EMAIL_PASSWORD, EMAIL_SERVICE, EMAIL_USERNAME } = require('./configuration');
 const logger = require('./winston');
 
 const router = new Router({
@@ -21,23 +21,21 @@ router.get('/captcha', async (ctx) => {
 
 router.post('/captcha', async (ctx) => {
   const r = Math.floor(Math.random() * (999999 - 100000) + 100000);
-
   repos.save({
     email: ctx.request.body.email || '',
     tag: ctx.request.body.tag || '',
     code: r,
     datime: dayjs().format('YYYY-MM-DD HH:mm:ss.SSS'),
   });
-
   const transporter = nodemailer.createTransport({
-    service: CONFIGURATION.EMAIL_SERVICE,
+    service: EMAIL_SERVICE,
     auth: {
-      user: CONFIGURATION.EMAIL_USERNAME,
-      pass: CONFIGURATION.EMAIL_PASSWORD,
+      user: EMAIL_USERNAME,
+      pass: EMAIL_PASSWORD,
     },
   });
   const mailOptions = {
-    from: CONFIGURATION.EMAIL_USERNAME,
+    from: EMAIL_USERNAME,
     to: ctx.request.body.email,
     subject: '学子就业网邮箱验证',
     html: `您的验证码是:<br/>
@@ -49,7 +47,6 @@ router.post('/captcha', async (ctx) => {
       logger.error(err);
     }
   });
-
   ctx.response.status = 200;
 });
 

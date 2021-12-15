@@ -10,6 +10,7 @@ const app /*: any */ = new Koa();
   if (cluster.isMaster) return;
 
   const bodyParser = require('koa-bodyparser');
+  const rewrite = require('koa-rewrite');
 
   const logger = require('./winston');
   const pool = require('./mysql');
@@ -17,6 +18,8 @@ const app /*: any */ = new Koa();
   app.env = process.env.NODE_ENV === 'production' ? process.env.NODE_ENV : 'development';
 
   app.use(bodyParser({ jsonLimit: '16mb' }));
+
+  app.use(rewrite(/^\/api\/miscellaneous\/setting(.*)/, '/api/crate/single/setting$1'));
 
   app.use(async (ctx, next) => {
     logger.debug(`--> ${ctx.request.method} ${ctx.request.url}`);
