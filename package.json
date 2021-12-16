@@ -1,6 +1,5 @@
 {
   "name": "crate",
-  "type": "module",
   "scripts": {
     "dev": "nodemon src/server.mjs",
     "serve": "node src/server.mjs",
