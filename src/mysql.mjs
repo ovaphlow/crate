@@ -3,15 +3,17 @@
 import mysql from 'mysql2';
 
 // const CONFIGURATION = require('./configuration');
-import { CONFIG } from './configuration.mjs';
+import {
+  DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME, PROC,
+} from './configuration.mjs';
 
 const pool /*: any */ = mysql.createPool({
-  host: CONFIG.DB_HOST,
-  user: CONFIG.DB_USERNAME,
-  password: CONFIG.DB_PASSWORD,
-  database: CONFIG.DB_NAME,
+  host: DB_HOST,
+  user: DB_USERNAME,
+  password: DB_PASSWORD,
+  database: DB_NAME,
   waitForConnections: true,
-  connectionLimit: CONFIG.PROC * 2,
+  connectionLimit: PROC * 2,
   queueLimit: 0,
 });
 

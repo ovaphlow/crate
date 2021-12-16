@@ -13,11 +13,12 @@ import { logger } from './winston.mjs';
 //   DB_PASSWORD,
 //   DB_HOST,
 // } = require('./configuration');
-import { CONFIG } from './configuration.mjs';
+import {
+  DB_HOST, DB_NAME, DB_USERNAME, DB_PASSWORD,
+} from './configuration.mjs';
 
-// eslint-disable-next-line
-export const sequelize /*: any */ = new Sequelize(CONFIG.DB_NAME, CONFIG.DB_USERNAME, CONFIG.DB_PASSWORD, {
-  host: CONFIG.DB_HOST,
+export const sequelize /*: any */ = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
+  host: DB_HOST,
   dialect: 'mysql',
   pool: {
     max: cpus().length,

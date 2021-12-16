@@ -5,14 +5,15 @@ import cluster, { isMaster } from 'cluster';
 import http from 'http';
 
 // require('dotenv').config();
-import dotenv from 'dotenv';
+// import dotenv from 'dotenv';
 
 // const app = require('./app');
 // import app from './app';
 // const logger = require('./winston');
 import logger from './winston.mjs';
 
-dotenv.config();
+// dotenv.config();
+import('dotenv').then((dotenv) => dotenv.config());
 
 const port = parseInt(process.env.PORT, 10) || 8421;
 

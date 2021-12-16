@@ -18,7 +18,9 @@ import FlakeId from 'flake-idgen';
 //   PUBLIC_KEY,
 //   SECRET,
 // } = require('./configuration.mjs');
-import { CONFIG } from './configuration.mjs';
+import {
+  PRIVATE_KEY, PUBLIC_KEY, DATACENTER_ID, WORKER_ID, EPOCH, SECRET,
+} from './configuration.mjs';
 // const repos = require('./subscriber-repository');
 import { repository, signUp } from './subscriber-repository.mjs';
 
@@ -27,7 +29,7 @@ export const router = new Router({
 });
 
 async function signJWT(data) {
-  const privateKey = await jose.importPKCS8(CONFIG.PRIVATE_KEY);
+  const privateKey = await jose.importPKCS8(PRIVATE_KEY);
   const jwt = await new jose.SignJWT(data)
     .setProtectedHeader({ alg: 'ES256' })
     .setIssuedAt()
@@ -71,9 +73,9 @@ router.post('/subscriber/sign-up', async (ctx) => {
   hmac.update(password);
   const passwordSalted = hmac.digest('hex');
   const flakeIdGen = new FlakeId({
-    datacenter: CONFIG.DATACENTER_ID,
-    worker: CONFIG.WORKER_ID,
-    epoch: CONFIG.EPOCH,
+    datacenter: DATACENTER_ID,
+    worker: WORKER_ID,
+    epoch: EPOCH,
   });
   const fid = flakeIdGen.next();
   const r = await signUp({
@@ -89,7 +91,7 @@ router.post('/subscriber/sign-up', async (ctx) => {
 
 router.post('/subscriber/refresh-token', async (ctx) => {
   const jwt = ctx.request.header.authorization.replace('Bearer ', '');
-  const publicKey = await jose.importSPKI(CONFIG.PUBLIC_KEY);
+  const publicKey = await jose.importSPKI(PUBLIC_KEY);
   const result = await jose.jwtVerify(jwt, publicKey, {
     issuer: 'https://ovaphlow.io',
     audience: 'ovaphlow:crate',
@@ -180,7 +182,7 @@ router.post('/subscriber', async (ctx) => {
   [result] = await ctx.db_client.query(sql, [
     ctx.request.body.username,
     JSON.stringify({
-      uuid: uuidv5(ctx.request.body.username, Buffer.from(CONFIG.SECRET)),
+      uuid: uuidv5(ctx.request.body.username, Buffer.from(SECRET)),
       name: ctx.request.body.name,
       password: ctx.request.body.password,
       tag: ctx.request.body.tag,

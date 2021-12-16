@@ -12,7 +12,6 @@ export const repository = {
     if (option === '') {
       //
     } else if (option === 'for-auth') {
-      console.log(data);
       const sql = `
       select id, username, detail->>'$.password' password, detail->>'$.salt' salt
       from subscriber
@@ -22,7 +21,6 @@ export const repository = {
         replacements: data,
         type: QueryTypes.SELECT,
       });
-      console.log(result);
       const [row] = result;
       return row;
     }

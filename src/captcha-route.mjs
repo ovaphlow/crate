@@ -8,7 +8,9 @@ import nodemailer from 'nodemailer';
 // const repos = require('./captcha-repository');
 import repos from './captcha-repository.mjs';
 // const { EMAIL_PASSWORD, EMAIL_SERVICE, EMAIL_USERNAME } = require('./configuration');
-import { CONFIG } from './configuration.mjs';
+import {
+  EMAIL_SERVICE, EMAIL_USERNAME, EMAIL_PASSWORD,
+} from './configuration.mjs';
 // const logger = require('./winston');
 import logger from './winston.mjs';
 
@@ -34,14 +36,14 @@ router.post('/captcha', async (ctx) => {
     datime: dayjs().format('YYYY-MM-DD HH:mm:ss.SSS'),
   });
   const transporter = nodemailer.createTransport({
-    service: CONFIG.EMAIL_SERVICE,
+    service: EMAIL_SERVICE,
     auth: {
-      user: CONFIG.EMAIL_USERNAME,
-      pass: CONFIG.EMAIL_PASSWORD,
+      user: EMAIL_USERNAME,
+      pass: EMAIL_PASSWORD,
     },
   });
   const mailOptions = {
-    from: CONFIG.EMAIL_USERNAME,
+    from: EMAIL_USERNAME,
     to: ctx.request.body.email,
     subject: '学子就业网邮箱验证',
     html: `您的验证码是:<br/>
