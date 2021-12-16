@@ -1,26 +1,33 @@
-const crypto = require('crypto');
+// const crypto = require('crypto');
+import crypto from 'crypto';
 
-const Router = require('@koa/router');
-const uuidv5 = require('uuid').v5;
-const jose = require('jose');
-const FlakeId = require('flake-idgen');
+// const Router = require('@koa/router');
+import Router from '@koa/router';
+// const uuidv5 = require('uuid').v5;
+import { v5 as uuidv5 } from 'uuid';
+// const jose = require('jose');
+import * as jose from 'jose';
+// const FlakeId = require('flake-idgen');
+import FlakeId from 'flake-idgen';
 
-const {
-  DATACENTER_ID,
-  WORKER_ID,
-  EPOCH,
-  PRIVATE_KEY,
-  PUBLIC_KEY,
-  SECRET,
-} = require('./configuration');
-const repos = require('./subscriber-repository');
+// const {
+//   DATACENTER_ID,
+//   WORKER_ID,
+//   EPOCH,
+//   PRIVATE_KEY,
+//   PUBLIC_KEY,
+//   SECRET,
+// } = require('./configuration.mjs');
+import { CONFIG } from './configuration.mjs';
+// const repos = require('./subscriber-repository');
+import { repository, signUp } from './subscriber-repository.mjs';
 
-const router = new Router({
+export const router = new Router({
   prefix: '/api/miscellaneous',
 });
 
 async function signJWT(data) {
-  const privateKey = await jose.importPKCS8(PRIVATE_KEY);
+  const privateKey = await jose.importPKCS8(CONFIG.PRIVATE_KEY);
   const jwt = await new jose.SignJWT(data)
     .setProtectedHeader({ alg: 'ES256' })
     .setIssuedAt()
@@ -33,7 +40,7 @@ async function signJWT(data) {
 
 router.post('/subscriber/sign-in', async (ctx) => {
   const { username } = ctx.request.body;
-  const user = await repos.get('for-auth', { username });
+  const user = await repository.get('for-auth', { username });
   const { id } = user ?? { id: 0 };
   if (id > 0) {
     const hmac = crypto.createHmac('sha256', user.salt);
@@ -53,7 +60,7 @@ router.post('/subscriber/sign-in', async (ctx) => {
 
 router.post('/subscriber/sign-up', async (ctx) => {
   const { username } = ctx.request.body;
-  const result = await repos.filter('by-username', { username });
+  const result = await repository.filter('by-username', { username });
   if (result.length > 0) {
     ctx.response.status = 401;
     return;
@@ -63,9 +70,13 @@ router.post('/subscriber/sign-up', async (ctx) => {
   const { password } = ctx.request.body;
   hmac.update(password);
   const passwordSalted = hmac.digest('hex');
-  const flakeIdGen = new FlakeId({ datacenter: DATACENTER_ID, worker: WORKER_ID, epoch: EPOCH });
+  const flakeIdGen = new FlakeId({
+    datacenter: CONFIG.DATACENTER_ID,
+    worker: CONFIG.WORKER_ID,
+    epoch: CONFIG.EPOCH,
+  });
   const fid = flakeIdGen.next();
-  const r = await repos.signUp({
+  const r = await signUp({
     id: fid.readBigInt64BE(0).toString(),
     username,
     password: passwordSalted,
@@ -78,7 +89,7 @@ router.post('/subscriber/sign-up', async (ctx) => {
 
 router.post('/subscriber/refresh-token', async (ctx) => {
   const jwt = ctx.request.header.authorization.replace('Bearer ', '');
-  const publicKey = await jose.importSPKI(PUBLIC_KEY);
+  const publicKey = await jose.importSPKI(CONFIG.PUBLIC_KEY);
   const result = await jose.jwtVerify(jwt, publicKey, {
     issuer: 'https://ovaphlow.io',
     audience: 'ovaphlow:crate',
@@ -169,7 +180,7 @@ router.post('/subscriber', async (ctx) => {
   [result] = await ctx.db_client.query(sql, [
     ctx.request.body.username,
     JSON.stringify({
-      uuid: uuidv5(ctx.request.body.username, Buffer.from(SECRET)),
+      uuid: uuidv5(ctx.request.body.username, Buffer.from(CONFIG.SECRET)),
       name: ctx.request.body.name,
       password: ctx.request.body.password,
       tag: ctx.request.body.tag,
@@ -178,4 +189,5 @@ router.post('/subscriber', async (ctx) => {
   ctx.response.body = result;
 });
 
-module.exports = router;
+// module.exports = router;
+export default router;

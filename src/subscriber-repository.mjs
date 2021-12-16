@@ -1,8 +1,13 @@
-const { QueryTypes } = require('sequelize');
+// const { QueryTypes } = require('sequelize');
+import Sequelize from 'sequelize';
 
-const sequelize = require('./sequelize');
+// const sequelize = require('./sequelize');
+import { sequelize } from './sequelize.mjs';
 
-module.exports = {
+const { QueryTypes } = Sequelize;
+
+// module.exports = {
+export const repository = {
   get: async (option, data) => {
     if (option === '') {
       //
@@ -54,4 +59,17 @@ module.exports = {
     });
     return result;
   },
+};
+
+export const signUp = async (data) => {
+  const sql = `
+  insert into
+    subscriber (id, username, detail)
+    values (:id, :username, json_object('password', :password, 'salt', :salt))
+  `;
+  const result = await sequelize.query(sql, {
+    replacements: data,
+    type: QueryTypes.INSERT,
+  });
+  return result;
 };

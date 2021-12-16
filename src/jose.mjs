@@ -1,5 +1,6 @@
 // @flow
-const jose = require('jose');
+// const jose = require('jose');
+import jose from 'jose';
 
 async function jwtMethod() {
   const { publicKey, privateKey } = await jose.generateKeyPair('ES256', { kty: 'EC' });

@@ -1,6 +1,8 @@
-const pool = require('./mysql');
+// const pool = require('./mysql');
+import pool from './mysql.mjs';
 
-module.exports = {
+// module.exports = {
+export const repository = {
   filter: async (option, data) => {
     const client = pool.promise();
     if (option === 'check-by-email-code') {
@@ -37,3 +39,5 @@ module.exports = {
     return result;
   },
 };
+
+export default repository;

@@ -1,12 +1,18 @@
-const Router = require('@koa/router');
-const dayjs = require('dayjs');
-const nodemailer = require('nodemailer');
+// const Router = require('@koa/router');
+import Router from '@koa/router';
+// const dayjs = require('dayjs');
+import dayjs from 'dayjs';
+// const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
-const repos = require('./captcha-repository');
-const { EMAIL_PASSWORD, EMAIL_SERVICE, EMAIL_USERNAME } = require('./configuration');
-const logger = require('./winston');
+// const repos = require('./captcha-repository');
+import repos from './captcha-repository.mjs';
+// const { EMAIL_PASSWORD, EMAIL_SERVICE, EMAIL_USERNAME } = require('./configuration');
+import { CONFIG } from './configuration.mjs';
+// const logger = require('./winston');
+import logger from './winston.mjs';
 
-const router = new Router({
+export const router = new Router({
   prefix: '/api/miscellaneous',
 });
 
@@ -28,14 +34,14 @@ router.post('/captcha', async (ctx) => {
     datime: dayjs().format('YYYY-MM-DD HH:mm:ss.SSS'),
   });
   const transporter = nodemailer.createTransport({
-    service: EMAIL_SERVICE,
+    service: CONFIG.EMAIL_SERVICE,
     auth: {
-      user: EMAIL_USERNAME,
-      pass: EMAIL_PASSWORD,
+      user: CONFIG.EMAIL_USERNAME,
+      pass: CONFIG.EMAIL_PASSWORD,
     },
   });
   const mailOptions = {
-    from: EMAIL_USERNAME,
+    from: CONFIG.EMAIL_USERNAME,
     to: ctx.request.body.email,
     subject: '学子就业网邮箱验证',
     html: `您的验证码是:<br/>
@@ -50,4 +56,5 @@ router.post('/captcha', async (ctx) => {
   ctx.response.status = 200;
 });
 
-module.exports = router;
+// module.exports = router;
+export default router;

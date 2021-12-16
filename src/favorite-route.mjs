@@ -1,6 +1,7 @@
-const Router = require('@koa/router');
+// const Router = require('@koa/router');
+import Router from '@koa/router';
 
-const router = new Router({
+export const router = new Router({
   prefix: '/api/miscellaneous',
 });
 
@@ -17,7 +18,7 @@ router.get('/favorite', async (ctx) => {
         select
           id
           , ref_id
-          , ref_id2 
+          , ref_id2
           , dtime
           , detail->>'$.category' category
           , detail->>'$.tag' tag
@@ -35,7 +36,7 @@ router.get('/favorite', async (ctx) => {
     const sql = `
         select id
           , ref_id
-          , ref_id2 
+          , ref_id2
           , dtime
           , detail->>'$.category' category
           , detail->>'$.tag' tag
@@ -59,7 +60,7 @@ router.get('/favorite', async (ctx) => {
         select
           id
           , ref_id
-          , ref_id2 
+          , ref_id2
           , dtime
           , detail->>'$.category' category
           , detail->>'$.tag' tag
@@ -106,4 +107,5 @@ router.post('/favorite', async (ctx) => {
   ctx.response.body = result;
 });
 
-module.exports = router;
+// module.exports = router;
+export default router;

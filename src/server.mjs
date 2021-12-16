@@ -1,22 +1,22 @@
 // @flow
-const cluster = require('cluster');
-// import cluster from 'cluster';
-const http = require('http');
-// import http from 'http';
+// const cluster = require('cluster');
+import cluster, { isMaster } from 'cluster';
+// const http = require('http');
+import http from 'http';
 
-require('dotenv').config();
-// import dotenv from 'dotenv';
+// require('dotenv').config();
+import dotenv from 'dotenv';
 
-const app = require('./app');
+// const app = require('./app');
 // import app from './app';
-const logger = require('./winston');
-// import logger from './winston';
+// const logger = require('./winston');
+import logger from './winston.mjs';
 
-// dotenv.config();
+dotenv.config();
 
 const port = parseInt(process.env.PORT, 10) || 8421;
 
-if (cluster.isMaster) {
+if (isMaster) {
   logger.info(`主进程 PID:${process.pid}`);
 
   for (let i = 0; i < parseInt(process.env.PROC || 1, 10); i += 1) {
@@ -33,5 +33,7 @@ if (cluster.isMaster) {
     cluster.fork();
   });
 } else {
-  http.createServer(app.callback()).listen(port);
+  import('./app.mjs').then(({ app }) => {
+    http.createServer(app.callback()).listen(port);
+  });
 }

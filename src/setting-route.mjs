@@ -1,6 +1,7 @@
-const Router = require('@koa/router');
+// const Router = require('@koa/router');
+import Router from '@koa/router';
 
-const router = new Router({
+export const router = new Router({
   prefix: '/api/crate/single',
 });
 
@@ -36,4 +37,5 @@ router.get('/setting', async (ctx) => {
   }
 });
 
-module.exports = router;
+// module.exports = router;
+export default router;

@@ -1,6 +1,7 @@
-const Router = require('@koa/router');
+// const Router = require('@koa/router');
+import Router from '@koa/router';
 
-const router = new Router({
+export const router = new Router({
   prefix: '/api/miscellaneous',
 });
 
@@ -265,4 +266,5 @@ router.post('/message', async (ctx) => {
   ctx.response.body = result;
 });
 
-module.exports = router;
+// module.exports = router;
+export default router;

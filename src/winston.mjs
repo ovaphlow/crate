@@ -1,8 +1,8 @@
 // @flow
-const winston = require('winston');
-// import winston from 'winston';
+// const winston = require('winston');
+import winston from 'winston';
 
-const logger /*: any */ = winston.createLogger({
+export const logger /*: any */ = winston.createLogger({
   transports: [
     new winston.transports.Console({
       level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
@@ -29,5 +29,5 @@ const logger /*: any */ = winston.createLogger({
   ],
 });
 
-module.exports = logger;
-// export default logger;
+// module.exports = logger;
+export default logger;

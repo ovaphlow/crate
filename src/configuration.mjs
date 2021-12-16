@@ -1,7 +1,8 @@
-module.exports = {
+// module.exports = {
+export const CONFIG = {
   SECRET: 'ovaphlow-=CRAT=-',
 
-  NODE_PROC: parseInt(process.env.PROC || 1, 10),
+  PROC: parseInt(process.env.PROC || 1, 10),
 
   DATACENTER_ID: 3420,
   WORKER_ID: 3420,
@@ -25,3 +26,5 @@ module.exports = {
   6HfCHWrMlViG/lue8mQbN+Q2wb8HkS40wq51MJkqftkgMjITFLExHKc2
   -----END PRIVATE KEY-----`,
 };
+
+export default CONFIG;

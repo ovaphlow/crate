@@ -1,10 +1,11 @@
 {
   "name": "crate",
+  "type": "module",
   "scripts": {
-    "dev": "nodemon src/server",
-    "serve": "node src/server",
+    "dev": "nodemon src/server.mjs",
+    "serve": "node src/server.mjs",
     "flow": "flow",
-    "lint": "eslint --fix src/*.js .eslintrc.js"
+    "lint": "eslint --fix src/*.mjs .eslintrc.js"
   },
   "author": "ovaphlow@live.com",
   "license": "ISC",
