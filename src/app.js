@@ -6,7 +6,6 @@ const Koa = require('koa');
 const app /*: any */ = new Koa();
 
 (() => {
-  // eslint-disable-next-line
   if (cluster.isMaster) return;
 
   const bodyParser = require('koa-bodyparser');
@@ -14,8 +13,6 @@ const app /*: any */ = new Koa();
 
   const logger = require('./winston');
   const pool = require('./mysql');
-
-  app.env = process.env.NODE_ENV === 'production' ? process.env.NODE_ENV : 'development';
 
   app.use(bodyParser({ jsonLimit: '16mb' }));
 
@@ -27,6 +24,10 @@ const app /*: any */ = new Koa();
     logger.debug(`<-- ${ctx.request.method} ${ctx.request.url}`);
   });
 
+  /**
+   * 在ctx中生成数据库连接
+   * 数据库连接使用sequelize后移除
+   */
   app.use(async (ctx, next) => {
     ctx.db_client = pool.promise();
     await next();
