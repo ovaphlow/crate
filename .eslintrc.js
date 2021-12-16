@@ -1,6 +1,5 @@
 module.exports = {
   env: {
-    commonjs: true,
     es2021: true,
     node: true,
   },
@@ -9,9 +8,8 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: 13,
+    sourceType: 'module',
   },
   rules: {
-    'global-require': 0,
-    'no-console': 0,
   },
 };

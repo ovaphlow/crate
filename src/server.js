@@ -1,7 +1,18 @@
 // @flow
 const cluster = require('cluster');
+// import cluster from 'cluster';
+const http = require('http');
+// import http from 'http';
 
+require('dotenv').config();
+// import dotenv from 'dotenv';
+
+const app = require('./app');
+// import app from './app';
 const logger = require('./winston');
+// import logger from './winston';
+
+// dotenv.config();
 
 const port = parseInt(process.env.PORT, 10) || 8421;
 
@@ -22,11 +33,5 @@ if (cluster.isMaster) {
     cluster.fork();
   });
 } else {
-  const http = require('http');
-
-  require('dotenv').config();
-
-  const app = require('./app');
-
   http.createServer(app.callback()).listen(port);
 }

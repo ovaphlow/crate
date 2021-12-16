@@ -1,5 +1,6 @@
 // @flow
 const winston = require('winston');
+// import winston from 'winston';
 
 const logger /*: any */ = winston.createLogger({
   transports: [
@@ -29,3 +30,4 @@ const logger /*: any */ = winston.createLogger({
 });
 
 module.exports = logger;
+// export default logger;
