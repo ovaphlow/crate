@@ -1,4 +1,3 @@
-// const Router = require('@koa/router');
 import Router from '@koa/router';
 
 export const router = new Router({
@@ -6,7 +5,6 @@ export const router = new Router({
 });
 
 router.put('/feedback/:id', async (ctx) => {
-  // const { save } = require('./message-repository');
   import('./message-repository.mjs').then(async ({ messageRepository }) => {
     const option = ctx.request.query.option || '';
     if (option === 'reply') {
@@ -27,9 +25,8 @@ router.put('/feedback/:id', async (ctx) => {
       }
       const sql = `
       update feedback
-      set detail = json_set(detail
-                            , '$.status', '已处理')
-      where id = ?;
+      set detail = json_set(detail, '$.status', '已处理')
+      where id = ?
       `;
       await ctx.db_client.query(sql, [parseInt(ctx.params.id, 10)]);
       ctx.response.status = 200;
@@ -41,15 +38,14 @@ router.get('/feedback', async (ctx) => {
   const option = ctx.request.query.option || '';
   if (option === '') {
     const sql = `
-    select
-      id
-      , ref_id user_id
-      , dtime datime
-      , detail->>'$.category' category
-      , detail->>'$.content' content
-      , detail->>'$.status' status
-      , detail->>'$.tag' user_category
-      , detail->>'$.ref_uuid' user_uuid
+    select id
+        , ref_id user_id
+        , dtime datime
+        , detail->>'$.category' category
+        , detail->>'$.content' content
+        , detail->>'$.status' status
+        , detail->>'$.tag' user_category
+        , detail->>'$.ref_uuid' user_uuid
     from feedback
     where detail->>'$.category' = ?
     order by id desc
@@ -59,18 +55,17 @@ router.get('/feedback', async (ctx) => {
     ctx.response.body = result;
   } else if (option === 'by-employer_id-and-tag') {
     const sql = `
-    select
-      id
-      , ref_id
-      , dtime
-      , detail->>'$.category' category
-      , detail->>'$.content' content
-      , detail->>'$.status' status
-      , detail->>'$.tag' tag
-      , detail->>'$.ref_uuid' uuid
+    select id
+        , ref_id
+        , dtime
+        , detail->>'$.category' category
+        , detail->>'$.content' content
+        , detail->>'$.status' status
+        , detail->>'$.tag' tag
+        , detail->>'$.ref_uuid' uuid
     from feedback
     where ref_id = ?
-      and detail->>'$.tag' = ?
+        and detail->>'$.tag' = ?
     order by id desc
     limit 10
     `;
@@ -81,18 +76,17 @@ router.get('/feedback', async (ctx) => {
     ctx.response.body = result;
   } else if (option === 'by-ref_id-tag') {
     const sql = `
-    select
-      id
-      , ref_id
-      , dtime
-      , detail->>'$.category' category
-      , detail->>'$.content' content
-      , detail->>'$.status' status
-      , detail->>'$.tag' tag
-      , detail->>'$.ref_uuid' uuid
+    select id
+        , ref_id
+        , dtime
+        , detail->>'$.category' category
+        , detail->>'$.content' content
+        , detail->>'$.status' status
+        , detail->>'$.tag' tag
+        , detail->>'$.ref_uuid' uuid
     from feedback
     where ref_id = ?
-      and detail->>'$.tag' = ?
+        and detail->>'$.tag' = ?
     order by id desc
     limit 20
     `;
@@ -107,10 +101,7 @@ router.get('/feedback', async (ctx) => {
 router.post('/feedback', async (ctx) => {
   const sql = `
   insert into feedback (ref_id, dtime, detail)
-    values(?, ?, json_object("ref_uuid", ?
-                              , "category", ?
-                              , "tag", ?
-                              , "content", ?))
+    values(?, ?, json_object("ref_uuid", ?, "category", ?, "tag", ?, "content", ?))
   `;
   const [result] = await ctx.db_client.execute(sql, [
     ctx.request.body.user_id,
@@ -122,6 +113,3 @@ router.post('/feedback', async (ctx) => {
   ]);
   ctx.response.body = result;
 });
-
-// module.exports = router;
-export default router;

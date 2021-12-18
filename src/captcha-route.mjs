@@ -1,18 +1,12 @@
-// const Router = require('@koa/router');
 import Router from '@koa/router';
-// const dayjs = require('dayjs');
 import dayjs from 'dayjs';
-// const nodemailer = require('nodemailer');
 import nodemailer from 'nodemailer';
 
-// const repos = require('./captcha-repository');
 import repos from './captcha-repository.mjs';
-// const { EMAIL_PASSWORD, EMAIL_SERVICE, EMAIL_USERNAME } = require('./configuration');
 import {
   EMAIL_SERVICE, EMAIL_USERNAME, EMAIL_PASSWORD,
 } from './configuration.mjs';
-// const logger = require('./winston');
-import logger from './winston.mjs';
+import { logger } from './winston.mjs';
 
 export const router = new Router({
   prefix: '/api/miscellaneous',
@@ -57,6 +51,3 @@ router.post('/captcha', async (ctx) => {
   });
   ctx.response.status = 200;
 });
-
-// module.exports = router;
-export default router;

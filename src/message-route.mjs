@@ -1,4 +1,3 @@
-// const Router = require('@koa/router');
 import Router from '@koa/router';
 
 export const router = new Router({
@@ -9,13 +8,13 @@ router.get('/message/statistic', async (ctx) => {
   const option = ctx.request.query.option || '';
   if (option === 'qty-by-ref_id2-category-tag-status') {
     const sql = `
-        select count(*) qty
-        from message
-        where ref_id2 = ?
-          and position(? in detail->>'$.category') > 0
-          and position(? in detail->>'$.tag') > 0
-          and position(? in detail->>'$.status') > 0
-        `;
+    select count(*) qty
+    from message
+    where ref_id2 = ?
+        and position(? in detail->>'$.category') > 0
+        and position(? in detail->>'$.tag') > 0
+        and position(? in detail->>'$.status') > 0
+    `;
     const [result] = await ctx.db_client.execute(sql, [
       parseInt(ctx.request.query.ref_id2, 10),
       ctx.request.query.category,
@@ -31,11 +30,11 @@ router.get('/message/:id', async (ctx) => {
   const option = ctx.request.query.option || '';
   if (option === 'qty-by-ref_id2-status') {
     const sql = `
-        select count(*) qty
-        from message
-        where ref_id2 = ?
-          and detail->>'$.status' = ?
-        `;
+    select count(*) qty
+    from message
+    where ref_id2 = ?
+        and detail->>'$.status' = ?
+    `;
     const [result] = await ctx.db_client.execute(sql, [
       parseInt(ctx.request.params.id, 10),
       ctx.request.query.status,
@@ -48,12 +47,11 @@ router.put('/message/:id', async (ctx) => {
   const option = ctx.request.query.option || '';
   if (option === 'status-by-ref_id2-and-tag') {
     const sql = `
-        update message
-        set detail = json_set(detail
-                              , '$.status', ?)
-        where ref_id2 = ?
-          and detail->>'$.tag' = ?
-        `;
+    update message
+    set detail = json_set(detail, '$.status', ?)
+    where ref_id2 = ?
+        and detail->>'$.tag' = ?
+    `;
     const [result] = await ctx.db_client.execute(sql, [
       ctx.request.body.status,
       parseInt(ctx.params.id || 0, 10),
@@ -65,7 +63,7 @@ router.put('/message/:id', async (ctx) => {
     update message
     set detail = json_set(detail, '$.status', ?)
     where ref_id2 = ?
-      and id in (${ctx.request.body.id_list})
+        and id in (${ctx.request.body.id_list})
     `;
     const [result] = await ctx.db_client.execute(sql, [
       ctx.request.body.status,
@@ -79,21 +77,21 @@ router.get('/message', async (ctx) => {
   const option = ctx.request.query.option || '';
   if (option === 'by-ref_id2-tag') {
     const sql = `
-        select id
-          , ref_id
-          , ref_id2
-          , dtime
-          , detail->>'$.status' status
-          , detail->>'$.category' category
-          , detail->>'$.tag' tag
-          , detail->>'$.title' title
-          , detail->>'$.content' content
-        from message
-        where ref_id2 = ?
-          and detail->>'$.tag' = ?
-        order by id desc
-        limit 100
-        `;
+    select id
+        , ref_id
+        , ref_id2
+        , dtime
+        , detail->>'$.status' status
+        , detail->>'$.category' category
+        , detail->>'$.tag' tag
+        , detail->>'$.title' title
+        , detail->>'$.content' content
+    from message
+    where ref_id2 = ?
+        and detail->>'$.tag' = ?
+    order by id desc
+    limit 100
+    `;
     const [result] = await ctx.db_client.execute(sql, [
       parseInt(ctx.request.query.ref_id2, 10),
       ctx.request.query.tag,
@@ -101,22 +99,22 @@ router.get('/message', async (ctx) => {
     ctx.response.body = result;
   } else if (option === 'by-ref_id2-category-tag-status') {
     const sql = `
-        select id
-          , ref_id
-          , ref_id2
-          , dtime
-          , detail->>'$.status' status
-          , detail->>'$.category' category
-          , detail->>'$.tag' tag
-          , detail->>'$.title' title
-          , detail->>'$.content' content
-        from message
-        where ref_id2 = ?
-          and position(? in detail->>'$.category') > 0
-          and position(? in detail->>'$.tag') > 0
-          and position(? in detail->>'$.status') > 0
-        limit 100
-        `;
+    select id
+        , ref_id
+        , ref_id2
+        , dtime
+        , detail->>'$.status' status
+        , detail->>'$.category' category
+        , detail->>'$.tag' tag
+        , detail->>'$.title' title
+        , detail->>'$.content' content
+    from message
+    where ref_id2 = ?
+        and position(? in detail->>'$.category') > 0
+        and position(? in detail->>'$.tag') > 0
+        and position(? in detail->>'$.status') > 0
+    limit 100
+    `;
     const [result] = await ctx.db_client.execute(sql, [
       parseInt(ctx.request.query.ref_id2, 10),
       ctx.request.query.category,
@@ -126,27 +124,21 @@ router.get('/message', async (ctx) => {
     ctx.response.body = result;
   } else if (option === 'by-ref_id-ref_id2-category') {
     const sql = `
-        select id
-          , ref_id
-          , ref_id2
-          , dtime
-          , detail->>'$.status' status
-          , detail->>'$.category' category
-          , detail->>'$.tag' tag
-          , detail->>'$.title' title
-          , detail->>'$.content' content
-        from message
-        where (ref_id = ?
-               and ref_id2 = ?
-               and detail->'$.tag' = '企业用户'
-               and detail->'$.category' = ?)
-          or (ref_id = ?
-              and ref_id2 = ?
-              and detail->'$.tag' = '个人用户'
-              and detail->'$.category' = ?)
-        order by id
-        limit 100
-        `;
+    select id
+        , ref_id
+        , ref_id2
+        , dtime
+        , detail->>'$.status' status
+        , detail->>'$.category' category
+        , detail->>'$.tag' tag
+        , detail->>'$.title' title
+        , detail->>'$.content' content
+    from message
+    where (ref_id = ? and ref_id2 = ? and detail->'$.tag' = '企业用户' and detail->'$.category' = ?)
+        or (ref_id = ? and ref_id2 = ? and detail->'$.tag' = '个人用户' and detail->'$.category' = ?)
+    order by id
+    limit 100
+    `;
     const [result] = await ctx.db_client.execute(sql, [
       parseInt(ctx.request.query.ref_id2, 10),
       parseInt(ctx.request.query.ref_id, 10),
@@ -158,21 +150,21 @@ router.get('/message', async (ctx) => {
     ctx.response.body = result;
   } else if (option === 'ref_id2-and-tag') {
     const sql = `
-        select id
-          , ref_id
-          , ref_id2
-          , dtime
-          , detail->>'$.status' status
-          , detail->>'$.category' category
-          , detail->>'$.tag' tag
-          , detail->>'$.title' title
-          , detail->>'$.content' content
-        from message
-        where ref_id2 = ?
-          and detail->>'$.tag' = ?
-        order by id desc
-        limit 100
-        `;
+    select id
+        , ref_id
+        , ref_id2
+        , dtime
+        , detail->>'$.status' status
+        , detail->>'$.category' category
+        , detail->>'$.tag' tag
+        , detail->>'$.title' title
+        , detail->>'$.content' content
+    from message
+    where ref_id2 = ?
+        and detail->>'$.tag' = ?
+    order by id desc
+    limit 100
+    `;
     const [result] = await ctx.db_client.execute(sql, [
       parseInt(ctx.request.query.ref_id2 || 0, 10),
       ctx.request.query.tag,
@@ -182,13 +174,13 @@ router.get('/message', async (ctx) => {
     // 指定接收方的已读/未读消息，按发送方分组，用于列表页
     const sql = `
     select ref_id, ref_id2, detail->>'$.tag' tag, detail->>'$.status' status, max(id) id
-      , (select dtime from ovaphlow.message t2 where t2.id = max(t.id)) dtime
-      , (select detail->>'$.content' from ovaphlow.message t2 where t2.id = max(t.id)) content
-      , count(*) as qty
+        , (select dtime from ovaphlow.message t2 where t2.id = max(t.id)) dtime
+        , (select detail->>'$.content' from ovaphlow.message t2 where t2.id = max(t.id)) content
+        , count(*) as qty
     from ovaphlow.message t
     where ref_id2 = ? and detail->>'$.tag' = ?
-      and detail->>'$.category' = ?
-      and detail->>'$.status' = ?
+        and detail->>'$.category' = ?
+        and detail->>'$.status' = ?
     group by ref_id
     `;
     const [result] = await ctx.db_client.execute(sql, [
@@ -202,12 +194,12 @@ router.get('/message', async (ctx) => {
     // 指定接收方的已读未回消息(排除指定接收方的未读消息的ref_id)，按发送方分组，用于列表页
     const sql = `
     select ref_id, ref_id2, detail->>'$.tag' tag, detail->>'$.status' status
-      , max(id) id
-      , (select dtime from ovaphlow.message t2 where t2.id = max(t.id)) dtime
+        , max(id) id
+        , (select dtime from ovaphlow.message t2 where t2.id = max(t.id)) dtime
     from ovaphlow.message t
     where ref_id2 = ? and detail->>'$.tag' = ?
-      and detail->>'$.category' = ?
-      and ref_id not in (${ctx.request.query.list})
+        and detail->>'$.category' = ?
+        and ref_id not in (${ctx.request.query.list})
     group by ref_id
     order by dtime desc
     limit 100
@@ -222,12 +214,12 @@ router.get('/message', async (ctx) => {
     // 指定发送方的消息（排除指定接收方的ref_id列表），按接收方分组，用于列表页
     const sql = `
     select ref_id, ref_id2, detail->>'$.tag' tag, detail->>'$.status' status
-      , max(id) id
-      , (select dtime from ovaphlow.message t2 where t2.id = max(t.id)) dtime
+        , max(id) id
+        , (select dtime from ovaphlow.message t2 where t2.id = max(t.id)) dtime
     from ovaphlow.message t
     where ref_id = ? and detail->>'$.tag' = ?
-      and detail->>'$.category' = ?
-      and ref_id2 not in (${ctx.request.query.list})
+        and detail->>'$.category' = ?
+        and ref_id2 not in (${ctx.request.query.list})
     group by ref_id2
     order by dtime desc
     limit 100
@@ -243,18 +235,9 @@ router.get('/message', async (ctx) => {
 
 router.post('/message', async (ctx) => {
   const sql = `
-      insert into message (ref_id
-                           , ref_id2
-                           , dtime
-                           , detail)
-      values(?
-             , ?
-             , ?
-             , json_object('status', '未读'
-                           , 'category', ?
-                           , 'tag', ?
-                           , 'content', ?))
-      `;
+  insert into message (ref_id, ref_id2, dtime, detail)
+  values(?, ?, ?, json_object('status', '未读', 'category', ?, 'tag', ?, 'content', ?))
+  `;
   const [result] = await ctx.db_client.execute(sql, [
     ctx.request.body.ref_id,
     ctx.request.body.ref_id2,
@@ -265,6 +248,3 @@ router.post('/message', async (ctx) => {
   ]);
   ctx.response.body = result;
 });
-
-// module.exports = router;
-export default router;

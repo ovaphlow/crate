@@ -1,27 +1,13 @@
-// const crypto = require('crypto');
 import crypto from 'crypto';
 
-// const Router = require('@koa/router');
 import Router from '@koa/router';
-// const uuidv5 = require('uuid').v5;
 import { v5 as uuidv5 } from 'uuid';
-// const jose = require('jose');
 import * as jose from 'jose';
-// const FlakeId = require('flake-idgen');
 import FlakeId from 'flake-idgen';
 
-// const {
-//   DATACENTER_ID,
-//   WORKER_ID,
-//   EPOCH,
-//   PRIVATE_KEY,
-//   PUBLIC_KEY,
-//   SECRET,
-// } = require('./configuration.mjs');
 import {
   PRIVATE_KEY, PUBLIC_KEY, DATACENTER_ID, WORKER_ID, EPOCH, SECRET,
 } from './configuration.mjs';
-// const repos = require('./subscriber-repository');
 import { repository, signUp } from './subscriber-repository.mjs';
 
 export const router = new Router({
@@ -104,12 +90,12 @@ router.post('/subscriber/refresh-token', async (ctx) => {
 router.get('/subscriber/:id', async (ctx) => {
   const sql = `
   select id
-    , username
-    , detail->>'$.name' name
-    , detail->>'$.uuid' uuid
+      , username
+      , detail->>'$.name' name
+      , detail->>'$.uuid' uuid
   from subscriber
   where id = ?
-    and detail->>'$.uuid' = ?
+      and detail->>'$.uuid' = ?
   `;
   const [result] = await ctx.db_client.query(sql, [
     parseInt(ctx.params.id, 10),
@@ -122,9 +108,9 @@ router.put('/subscriber/:id', async (ctx) => {
   const sql = `
   update subscriber
   set username = ?
-    , detail = json_set(detail, '$.name', ?)
+      , detail = json_set(detail, '$.name', ?)
   where id = ?
-    and detail->>'$.uuid' = ?
+      and detail->>'$.uuid' = ?
   `;
   const [result] = await ctx.db_client.query(sql, [
     ctx.request.body.username,
@@ -139,7 +125,7 @@ router.delete('/subscriber/:id', async (ctx) => {
   const sql = `
   delete from subscriber
   where id = ?
-    and detail->>'$.uuid' = ?
+      and detail->>'$.uuid' = ?
   `;
   const [result] = await ctx.db_client.query(sql, [
     parseInt(ctx.params.id, 10),
@@ -152,11 +138,10 @@ router.get('/subscriber', async (ctx) => {
   const option = ctx.request.query.option || '';
   if (option === 'tag') {
     const sql = `
-    select
-      id
-      , username
-      , detail->>'$.name' name
-      , detail->>'$.uuid' uuid
+    select id
+        , username
+        , detail->>'$.name' name
+        , detail->>'$.uuid' uuid
     from subscriber
     where detail->>'$.tag' = ?
     order by id desc
@@ -190,6 +175,3 @@ router.post('/subscriber', async (ctx) => {
   ]);
   ctx.response.body = result;
 });
-
-// module.exports = router;
-export default router;

@@ -1,5 +1,4 @@
 // @flow
-// const winston = require('winston');
 import winston from 'winston';
 
 export const logger /*: any */ = winston.createLogger({
@@ -28,6 +27,3 @@ export const logger /*: any */ = winston.createLogger({
     }),
   ],
 });
-
-// module.exports = logger;
-export default logger;

@@ -1,12 +1,9 @@
-// const { QueryTypes } = require('sequelize');
 import Sequelize from 'sequelize';
 
-// const sequelize = require('./sequelize');
 import { sequelize } from './sequelize.mjs';
 
 const { QueryTypes } = Sequelize;
 
-// module.exports = {
 export const repository = {
   get: async (option, data) => {
     if (option === '') {
@@ -47,9 +44,8 @@ export const repository = {
 
   signUp: async (data) => {
     const sql = `
-    insert into
-      subscriber (id, username, detail)
-      values (:id, :username, json_object('password', :password, 'salt', :salt))
+    insert into subscriber (id, username, detail)
+        values (:id, :username, json_object('password', :password, 'salt', :salt))
     `;
     const result = await sequelize.query(sql, {
       replacements: data,
@@ -61,9 +57,8 @@ export const repository = {
 
 export const signUp = async (data) => {
   const sql = `
-  insert into
-    subscriber (id, username, detail)
-    values (:id, :username, json_object('password', :password, 'salt', :salt))
+  insert into subscriber (id, username, detail)
+      values (:id, :username, json_object('password', :password, 'salt', :salt))
   `;
   const result = await sequelize.query(sql, {
     replacements: data,
