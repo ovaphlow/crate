@@ -1,34 +1,23 @@
 import Router from '@koa/router';
 
+import { remove, filter } from './favorite-repository.mjs';
+
 export const router = new Router({
   prefix: '/api/miscellaneous',
 });
 
 router.delete('/favorite/:id', async (ctx) => {
-  const sql = 'delete from favorite where id = ?';
-  const [result] = await ctx.db_client.execute(sql, [parseInt(ctx.params.id, 10)]);
+  const result = await remove({ id: parseInt(ctx.params.id || 0, 10) });
   ctx.response.body = result;
 });
 
 router.get('/favorite', async (ctx) => {
   const option = ctx.request.query.option || '';
   if (option === 'ref_id-and-tag') {
-    const sql = `
-    select id
-        , ref_id
-        , ref_id2
-        , dtime
-        , detail->>'$.category' category
-        , detail->>'$.tag' tag
-        , detail->>'$.ref_uuid' ref_uuid
-        , detail->>'$.ref_uuid2' ref_uuid2
-    from favorite
-    where ref_id = ?
-        and detail->>'$.tag' = ?
-    order by id desc
-    limit 100
-    `;
-    const [result] = await ctx.db_client.query(sql, [ctx.request.query.id, ctx.request.query.tag]);
+    const result = await filter({
+      ref_id: parseInt(ctx.request.query.id, 10),
+      tag: ctx.request.query.tag,
+    });
     ctx.response.body = result;
   } else if (option === 'by-ref_id-category-tag') {
     const sql = `
