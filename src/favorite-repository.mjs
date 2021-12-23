@@ -34,4 +34,5 @@ export const filter = async (option, data) => {
     });
     return result;
   }
+  return [];
 };
