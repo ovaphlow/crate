@@ -1,6 +1,8 @@
-import { QueryTypes } from 'sequelize';
+import Sequelize from 'sequelize';
 
 import { sequelize } from './sequelize.mjs';
+
+const { QueryTypes } = Sequelize;
 
 export const remove = async (data) => {
   const sql = 'delete from favorite where id = :id';

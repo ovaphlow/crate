@@ -2,7 +2,7 @@ import Router from '@koa/router';
 import dayjs from 'dayjs';
 import nodemailer from 'nodemailer';
 
-import repos from './captcha-repository.mjs';
+import { repository } from './captcha-repository.mjs';
 import {
   EMAIL_SERVICE, EMAIL_USERNAME, EMAIL_PASSWORD,
 } from './configuration.mjs';
@@ -15,7 +15,7 @@ export const router = new Router({
 router.get('/captcha', async (ctx) => {
   const option = ctx.request.query.option || '';
   if (option === 'check-by-email-code') {
-    const r = await repos.filter(option, ctx.request.query);
+    const r = await repository.filter(option, ctx.request.query);
     if (r) ctx.response.status = 200;
     else ctx.response.status = 401;
   }
@@ -23,7 +23,7 @@ router.get('/captcha', async (ctx) => {
 
 router.post('/captcha', async (ctx) => {
   const r = Math.floor(Math.random() * (999999 - 100000) + 100000);
-  repos.save({
+  repository.save({
     email: ctx.request.body.email || '',
     tag: ctx.request.body.tag || '',
     code: r,
