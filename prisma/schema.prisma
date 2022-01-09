@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model bulletin {
+  id          BigInt   @id @default(0)
+  category    String   @default("") @db.VarChar(20)
+  title       String   @default("") @db.VarChar(50)
+  record_time DateTime @db.DateTime(0)
+  expire_time DateTime @db.DateTime(0)
+  detail      Json
+  misc        Json
+}
+
+model captcha {
+  id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  email     String @default("") @db.VarChar(100)
+  detail    Json
+  origin_id Int    @default(0) @db.UnsignedInt
+}
+
+model favorite {
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  ref_id    Int      @default(0) @db.UnsignedInt
+  ref_id2   Int      @default(0) @db.UnsignedInt
+  dtime     DateTime @default(now()) @db.DateTime(0)
+  detail    Json
+  origin_id Int      @default(0) @db.UnsignedInt
+
+  @@index([ref_id2], map: "favorite_ref_id2_IDX")
+  @@index([ref_id], map: "favorite_ref_id_IDX")
+}
+
+model feedback {
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  ref_id    Int      @default(0) @db.UnsignedInt
+  dtime     DateTime @default(now()) @db.DateTime(0)
+  detail    Json
+  origin_id Int      @default(0) @db.UnsignedInt
+}
+
+model logbook {
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  ref_id    Int      @default(0) @db.UnsignedInt
+  ref_id2   Int      @default(0) @db.UnsignedInt
+  dtime     DateTime @default(now()) @db.DateTime(0)
+  detail    Json
+  origin_id Int      @default(0) @db.UnsignedInt
+}
+
+model message {
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  ref_id    Int      @default(0) @db.UnsignedInt
+  ref_id2   Int      @default(0) @db.UnsignedInt
+  dtime     DateTime @default(now()) @db.DateTime(0)
+  detail    Json
+  origin_id Int      @default(0) @db.UnsignedInt
+
+  @@index([ref_id2], map: "message_ref_id2_IDX")
+  @@index([ref_id], map: "message_ref_id_IDX")
+}
+
+model setting {
+  id       Int    @id @default(autoincrement()) @db.UnsignedInt
+  category String @default("") @db.VarChar(20)
+  ref_id   Int    @default(0) @db.UnsignedInt
+  ref_id2  Int    @default(0) @db.UnsignedInt
+  detail   Json
+}
+
+model subscriber {
+  id        BigInt @id @db.UnsignedBigInt
+  username  String @default("") @db.VarChar(100)
+  detail    Json
+  origin_id Int    @default(0) @db.UnsignedInt
+
+  @@index([username], map: "subscriber_username_IDX")
+}

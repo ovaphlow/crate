@@ -84,4 +84,11 @@ export const app /*: any */ = new Koa();
       app.use(router.allowedMethods());
     });
   })();
+
+  (() => {
+    import('./bulletin-route.mjs').then(({ router }) => {
+      app.use(router.routes());
+      app.use(router.allowedMethods());
+    });
+  })();
 })();
