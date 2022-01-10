@@ -30,13 +30,13 @@ router.post('/bulletin', async (ctx) => {
     epoch: EPOCH,
   });
   const fid = flakeIdGen.next();
-  const { category, title, expireTime } = ctx.request.body;
+  const { category, title, expireAt } = ctx.request.body;
   await bulletin.save({
     id: fid.readBigInt64BE(0),
     category,
     title,
-    record_time: new Date(),
-    expire_time: new Date(expireTime),
+    publishTime: new Date(),
+    expireAt: new Date(expireAt),
     detail: '{}',
     misc: '{}',
   });

@@ -1,4 +1,3 @@
-// @flow
 import { isMaster } from 'cluster';
 
 import Koa from 'koa';
@@ -8,14 +7,12 @@ import rewrite from 'koa-rewrite';
 import { logger } from './winston.mjs';
 import { pool } from './mysql.mjs';
 
-export const app /*: any */ = new Koa();
+export const app = new Koa();
 
 (() => {
   if (isMaster) return;
-
   app.use(bodyParser({ jsonLimit: '16mb' }));
   app.use(rewrite(/^\/api\/miscellaneous\/setting(.*)/, '/api/crate/single/setting$1'));
-
   app.use(async (ctx, next) => {
     logger.debug(`--> ${ctx.request.method} ${ctx.request.url}`);
     await next();
