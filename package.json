@@ -3,12 +3,12 @@
   "scripts": {
     "dev": "nodemon src/server.mjs",
     "serve": "node src/server.mjs",
-    "flow": "flow",
     "lint": "eslint --fix src/*.mjs .eslintrc.js"
   },
   "author": "ovaphlow@live.com",
   "license": "ISC",
   "dependencies": {
+    "@koa/multer": "^3.0.0",
     "@koa/router": "^10.1.1",
     "dayjs": "^1.10.7",
     "dotenv": "^10.0.0",
