@@ -55,6 +55,13 @@ export const app = new Koa();
   })();
 
   (() => {
+    import('./file.mjs').then(({ router }) => {
+      app.use(router.routes());
+      app.use(router.allowedMethods());
+    });
+  })();
+
+  (() => {
     import('./journal-route.mjs').then(({ router }) => {
       app.use(router.routes());
       app.use(router.allowedMethods());
