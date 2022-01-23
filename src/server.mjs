@@ -1,5 +1,3 @@
-// @flow
-// const cluster = require('cluster');
 import cluster, { isMaster } from 'cluster';
 import http from 'http';
 

@@ -1,5 +1,3 @@
-import { isMaster } from 'cluster';
-
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import rewrite from 'koa-rewrite';
@@ -10,13 +8,12 @@ import { pool } from './mysql.mjs';
 export const app = new Koa();
 
 (() => {
-  if (isMaster) return;
   app.use(bodyParser({ jsonLimit: '16mb' }));
   app.use(rewrite(/^\/api\/miscellaneous\/setting(.*)/, '/api/crate/single/setting$1'));
   app.use(async (ctx, next) => {
-    logger.debug(`--> ${ctx.request.method} ${ctx.request.url}`);
+    logger.info(`--> ${ctx.request.method} ${ctx.request.url}`);
     await next();
-    logger.debug(`<-- ${ctx.request.method} ${ctx.request.url}`);
+    logger.info(`<-- ${ctx.request.method} ${ctx.request.url}`);
   });
 
   /**
@@ -34,6 +31,7 @@ export const app = new Koa();
   });
 
   (() => {
+    logger.info('加载 captcha ...');
     import('./captcha-route.mjs').then(({ router }) => {
       app.use(router.routes());
       app.use(router.allowedMethods());
@@ -90,7 +88,7 @@ export const app = new Koa();
   })();
 
   (() => {
-    import('./bulletin-route.mjs').then(({ router }) => {
+    import('./bulletin.mjs').then(({ router }) => {
       app.use(router.routes());
       app.use(router.allowedMethods());
     });
