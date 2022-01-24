@@ -93,4 +93,11 @@ export const app = new Koa();
       app.use(router.allowedMethods());
     });
   })();
+
+  (() => {
+    import('./miscellaneous.mjs').then(({ router }) => {
+      app.use(router.routes());
+      app.use(router.allowedMethods());
+    });
+  })();
 })();
