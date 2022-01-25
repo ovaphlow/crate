@@ -30,6 +30,28 @@ export const getMiscellaneous = async (option, data) => {
     `, [data.tag]);
     return result;
   }
+  if (option === 'by-refId-tag') {
+    const client = pool.promise();
+    const [result] = await client.execute(`
+    select *
+    from miscellaneous
+    where ref_id = ? and json_contains(tag, ?) = true
+    order by id desc
+    limit ${data.skip}, ${data.take}
+    `, [data.refId, data.tag]);
+    return result;
+  }
+  if (option === 'by-refId-ref2Id-tag') {
+    const client = pool.promise();
+    const [result] = await client.execute(`
+    select *
+    from miscellaneous
+    where ref_id = ? and ref2_id = ? and json_contains(tag, ?) = true
+    order by id desc
+    limit ${data.skip}, ${data.take}
+    `, [data.refId, data.ref2Id, data.tag]);
+    return result;
+  }
   return [];
 };
 
@@ -89,8 +111,37 @@ router.delete('/api/miscellaneous/simple/:id', async (ctx) => {
 router.get('/api/miscellaneous/simple', async (ctx) => {
   const { option } = ctx.request.query;
   if (option === 'by-tag') {
-    const { tag } = ctx.request.query;
-    const result = await getMiscellaneous(option, { tag });
+    const { tag, skip, take } = ctx.request.query;
+    const result = await getMiscellaneous(option, {
+      tag,
+      skip: parseInt(skip, 10),
+      take: parseInt(take, 10),
+    });
+    ctx.response.body = result;
+  }
+  if (option === 'by-refId-tag') {
+    const {
+      refId, tag, skip, take,
+    } = ctx.request.query;
+    const result = await getMiscellaneous(option, {
+      refId: parseInt(refId, 10),
+      tag,
+      skip: parseInt(skip, 10) || 0,
+      take: parseInt(take, 10) || 20,
+    });
+    ctx.response.body = result;
+  }
+  if (option === 'by-refId-ref2Id-tag') {
+    const {
+      refId, ref2Id, tag, skip, take,
+    } = ctx.request.query;
+    const result = await getMiscellaneous(option, {
+      refId: parseInt(refId, 10),
+      ref2Id: parseInt(ref2Id, 10),
+      tag,
+      skip: parseInt(skip, 10) || 0,
+      take: parseInt(take, 10) || 20,
+    });
     ctx.response.body = result;
   }
 });

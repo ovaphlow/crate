@@ -14,7 +14,7 @@ router.delete('/favorite/:id', async (ctx) => {
 router.get('/favorite', async (ctx) => {
   const option = ctx.request.query.option || '';
   if (option === 'ref_id-and-tag') {
-    const result = await filter({
+    const result = await filter(option, {
       ref_id: parseInt(ctx.request.query.id, 10),
       tag: ctx.request.query.tag,
     });

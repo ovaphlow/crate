@@ -5,10 +5,10 @@
 ## feedback
 
 ```sql
-insert into ovaphlow.miscellaneous (id, ref_id, ref2_id, record_at, tag, detail)
-select id, user_id, 0, datime
+insert into ovaphlow.miscellaneous (ref_id, ref2_id, record_at, tag, detail)
+select user_id, 0, datime
     , json_array(category, user_category)
-    , json_object("status", status, "content", content, "ref_uuid", user_uuid)
+    , json_object("status", status, "content", content, "ref_uuid", user_uuid, "origin_id", id)
 from billboard.feedback;
 ```
 
