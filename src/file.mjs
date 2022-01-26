@@ -12,7 +12,9 @@ import { pool } from './mysql.mjs';
 
 export const router = new Router();
 
-const upload = multer();
+const upload = multer({
+  limits: { fieldSize: 4 * 1024 * 1024 },
+});
 
 export const getFile = async (option, data) => {
   if (option === 'by-ref') {
@@ -41,8 +43,8 @@ export const updateFile = async (data) => {
   const [result] = await client.execute(`
   update file
   set detail = ?
-  where ref_id = ? 
-  `, [data.detail, data.ref_id]);
+  where ref_id = ?
+  `, [data.detail, data.refId]);
   return result;
 };
 
@@ -54,7 +56,7 @@ export const saveFile = async (data) => {
   ) values (
       ?, ?, ?, ?
   )
-  `, [data.id, data.ref_id, data.tag, data.detail]);
+  `, [data.id, data.refId, data.tag, data.detail]);
   return result;
 };
 
@@ -68,13 +70,13 @@ router.post('/api/miscellaneous/simple/file', upload.single('resume'), async (ct
       epoch: EPOCH,
     });
     const fid = flakeIdGen.next();
+    fs.writeFileSync(path.resolve('..', 'upload', `${fid.readBigInt64BE(0)}.pdf`), ctx.request.file.buffer);
     await saveFile({
       id: fid.readBigInt64BE(0),
-      ref_id: ctx.request.body.ref_id || 0,
+      refId: ctx.request.body.refId || 0,
       tag: ctx.request.body.tag || '[]',
       detail: JSON.stringify({
         ...JSON.parse(ctx.request.body.detail || '{}'),
-        content: ctx.request.file.buffer,
       }),
     });
     ctx.response.status = 201;
@@ -82,10 +84,9 @@ router.post('/api/miscellaneous/simple/file', upload.single('resume'), async (ct
   if (result.length === 1) {
     fs.writeFileSync(path.resolve('..', 'upload', `${result[0].id}.pdf`), ctx.request.file.buffer);
     await updateFile({
-      ref_id: result[0].ref_id,
+      refId: result[0].ref_id,
       detail: JSON.stringify({
         ...JSON.parse(ctx.request.body.detail || '{}'),
-        content: ctx.request.file.buffer.toString(),
       }),
     });
     ctx.response.status = 200;
