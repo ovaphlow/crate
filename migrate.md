@@ -110,7 +110,8 @@ select
   , json_object("category", category
                 , "tag", user_category
                 , "ref_uuid", user_uuid
-                , "conent", content)
+                , "conent", content
+                , "status", status)
   , id
 from
   billboard.feedback
@@ -140,7 +141,7 @@ from
   billboard.sys_message
 ```
 
-````sql
+```sql
 insert
   into
   ovaphlow.message (ref_id
@@ -166,7 +167,6 @@ select case when category = 'common_to_ent' then common_user_id
                 , 'status', status) detail
   , id
 from billboard.message
-
 ```
 
 ## 平台用户
@@ -180,13 +180,13 @@ insert
 select
   username
   , json_object("uuid", uuid
-                "tag", "平台"
+                , "tag", "平台"
                 , "name", name
                 , "password", password)
   , id
 from
   billboard.mis_user
-````
+```
 
 ## setting 基础数据
 
