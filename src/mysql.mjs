@@ -11,6 +11,6 @@ export const pool /*: any */ = mysql.createPool({
   password: DB_PASSWORD,
   database: DB_NAME,
   waitForConnections: true,
-  connectionLimit: PROC * 2,
+  connectionLimit: PROC * 2 + 1,
   queueLimit: 0,
 });

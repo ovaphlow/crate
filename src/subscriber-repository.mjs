@@ -1,23 +1,16 @@
-import Sequelize from 'sequelize';
-
-import { sequelize } from './sequelize.mjs';
-
-const { QueryTypes } = Sequelize;
+import { pool } from './mysql.mjs';
 
 export const repository = {
   get: async (option, data) => {
+    const client = pool.promise();
     if (option === '') {
       //
     } else if (option === 'for-auth') {
-      const sql = `
+      const [result] = await client.execute(`
       select id, username, detail->>'$.password' password, detail->>'$.salt' salt
       from subscriber
-      where username = :username
-      `;
-      const result = await sequelize.query(sql, {
-        replacements: data,
-        type: QueryTypes.SELECT,
-      });
+      where username = ?
+      `, [data.username]);
       const [row] = result;
       return row;
     }
@@ -25,44 +18,35 @@ export const repository = {
   },
 
   filter: async (option, data) => {
+    const client = pool.promise();
     if (option === '') {
       //
     } else if (option === 'by-username') {
-      const sql = `
+      const [result] = await client.execute(`
       select id, username, detail->>'$.password' password, detail->>'$.salt' salt
       from subscriber
-      where username = :username
-      `;
-      const result = await sequelize.query(sql, {
-        replacements: data,
-        type: QueryTypes.SELECT,
-      });
+      where username = ?
+      `, [data.username]);
       return result;
     }
     return [];
   },
 
   signUp: async (data) => {
-    const sql = `
+    const client = pool.promise();
+    const [result] = await client.execute(`
     insert into subscriber (id, username, detail)
-        values (:id, :username, json_object('password', :password, 'salt', :salt))
-    `;
-    const result = await sequelize.query(sql, {
-      replacements: data,
-      type: QueryTypes.INSERT,
-    });
+        values (?, ?, json_object('password', ?, 'salt', ?))
+    `, [data.id, data.username, data.password, data.salt]);
     return result;
   },
 };
 
 export const signUp = async (data) => {
-  const sql = `
+  const client = pool.promise();
+  const [result] = await client.execute(`
   insert into subscriber (id, username, detail)
-      values (:id, :username, json_object('password', :password, 'salt', :salt))
-  `;
-  const result = await sequelize.query(sql, {
-    replacements: data,
-    type: QueryTypes.INSERT,
-  });
+      values (?, ?, json_object('password', ?, 'salt', ?))
+  `, [data.id, data.username, data.password, data.salt]);
   return result;
 };

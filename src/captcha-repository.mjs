@@ -12,7 +12,7 @@ export const repository = {
       order by id desc
       limit 1
       `;
-      const [result] = await client.query(sql, [data.email, data.code]);
+      const [result] = await client.execute(sql, [data.email, data.code]);
       return result.length === 1 ? result[0].id : 0;
     }
     return { id: 0 };
@@ -24,7 +24,7 @@ export const repository = {
     insert into captcha (email, detail)
     values(?, json_object('tag', ?, 'code', ?, 'datime', ?))
     `;
-    const [result] = await client.query(sql, [data.email, data.tag, data.code, data.datime]);
+    const [result] = await client.execute(sql, [data.email, data.tag, data.code, data.datime]);
     return result;
   },
 };

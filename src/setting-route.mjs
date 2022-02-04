@@ -1,13 +1,16 @@
 import Router from '@koa/router';
 
+import { pool } from './mysql.mjs';
+
 export const router = new Router({
   prefix: '/api/crate/single',
 });
 
 router.get('/setting', async (ctx) => {
+  const client = pool.promise();
   const option = ctx.request.query.option || '';
   if (option === 'by-category') {
-    const sql = `
+    const [result] = await client.execute(`
     select id
         , category
         , ref_id
@@ -16,11 +19,10 @@ router.get('/setting', async (ctx) => {
         , detail->>'$.name' name
     from setting
     where category = ?
-    `;
-    const [result] = await ctx.db_client.execute(sql, [ctx.request.query.category]);
+    `, [ctx.request.query.category]);
     ctx.response.body = result;
   } else if (option === 'category') {
-    const sql = `
+    const [result] = await client.execute(`
     select id
         , category
         , ref_id
@@ -30,8 +32,7 @@ router.get('/setting', async (ctx) => {
     from setting
     where category = ?
         and ref_id = 0
-    `;
-    const [result] = await ctx.db_client.execute(sql, [ctx.request.query.category]);
+    `, [ctx.request.query.category]);
     ctx.response.body = result;
   }
 });

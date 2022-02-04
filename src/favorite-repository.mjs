@@ -1,21 +1,17 @@
-import Sequelize from 'sequelize';
-
-import { sequelize } from './sequelize.mjs';
-
-const { QueryTypes } = Sequelize;
+import { pool } from './mysql.mjs';
 
 export const remove = async (data) => {
-  const sql = 'delete from favorite where id = :id';
-  const result = await sequelize.query(sql, {
-    replacements: data,
-    type: QueryTypes.DELETE,
-  });
+  const client = pool.promise();
+  const [result] = await client.execute(`
+  delete from favorite where id = ?
+  `, [data.id]);
   return result;
 };
 
 export const filter = async (option, data) => {
+  const client = pool.promise();
   if (option === 'ref_id-and-tag') {
-    const sql = `
+    const [result] = await client.execute(`
     select id
         , ref_id
         , ref_id2
@@ -29,11 +25,7 @@ export const filter = async (option, data) => {
         and detail->>'$.tag' = :tag
     order by id desc
     limit 100
-    `;
-    const result = await sequelize.query(sql, {
-      replacements: data,
-      type: QueryTypes.SELECT,
-    });
+    `, [data.ref_id, data.tag]);
     return result;
   }
   return [];
