@@ -1,6 +1,7 @@
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import helmet from 'koa-helmet';
+import koaLogger from 'koa-logger';
 import rewrite from 'koa-rewrite';
 
 import { logger } from './winston.mjs';
@@ -13,11 +14,16 @@ app.use(bodyParser({ jsonLimit: '16mb' }));
 
 app.use(rewrite(/^\/api\/miscellaneous\/setting(.*)/, '/api/crate/single/setting$1'));
 
-app.use(async (ctx, next) => {
-  logger.info(`--> ${ctx.request.method} ${ctx.request.url}`);
-  await next();
-  logger.info(`<-- ${ctx.request.method} ${ctx.request.url}`);
-});
+// eslint-disable-next-line
+app.use(koaLogger((str, args) => {
+  logger.debug(str);
+}));
+
+// app.use(async (ctx, next) => {
+//   logger.info(`--> ${ctx.request.method} ${ctx.request.url}`);
+//   await next();
+//   logger.info(`<-- ${ctx.request.method} ${ctx.request.url}`);
+// });
 
 app.on('error', (err, ctx) => {
   logger.error(`${ctx.req.method} ${ctx.req.url}`);
