@@ -1,5 +1,6 @@
 import Router from '@koa/router';
 
+import { saveMessage } from './message-repository.mjs';
 import { pool } from './mysql.mjs';
 
 export const router = new Router({
@@ -7,33 +8,31 @@ export const router = new Router({
 });
 
 router.put('/feedback/:id', async (ctx) => {
-  import('./message-repository.mjs').then(async ({ messageRepository }) => {
-    const client = pool.promise();
-    const option = ctx.request.query.option || '';
-    if (option === 'reply') {
-      const result = messageRepository.save(option, {
-        id: ctx.request.body.user_id,
-        dtime: ctx.request.body.datime,
-        detail: JSON.stringify({
-          status: '未读',
-          category: ctx.request.body.category,
-          title: ctx.request.body.title,
-          content: ctx.request.body.content,
-          tag: ctx.request.body.user_category,
-        }),
-      });
-      if (!result) {
-        ctx.response.status = 500;
-        return;
-      }
-      await client.execute(`
+  const client = pool.promise();
+  const option = ctx.request.query.option || '';
+  if (option === 'reply') {
+    const result = saveMessage(option, {
+      id: ctx.request.body.user_id,
+      dtime: ctx.request.body.datime,
+      detail: JSON.stringify({
+        status: '未读',
+        category: ctx.request.body.category,
+        title: ctx.request.body.title,
+        content: ctx.request.body.content,
+        tag: ctx.request.body.user_category,
+      }),
+    });
+    if (!result) {
+      ctx.response.status = 500;
+      return;
+    }
+    await client.execute(`
       update feedback
       set detail = json_set(detail, '$.status', '已处理')
       where id = ?
       `, [parseInt(ctx.params.id, 10)]);
-      ctx.response.status = 200;
-    }
-  });
+    ctx.response.status = 200;
+  }
 });
 
 router.get('/feedback', async (ctx) => {
