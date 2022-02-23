@@ -3,10 +3,12 @@ import Router from '@koa/router';
 import { pool } from './mysql.mjs';
 
 export const router = new Router({
-  prefix: '/api/miscellaneous',
+  prefix: '/api',
 });
 
-router.get('/journal', async (ctx) => {
+export const filterJournal = async (option) => {};
+
+router.get('/miscellaneous/journal', async (ctx) => {
   const client = pool.promise();
   const option = ctx.request.query.option || '';
   if (option === 'by-ref_id-tag') {
@@ -79,7 +81,7 @@ router.get('/journal', async (ctx) => {
   } else ctx.response.body = [];
 });
 
-router.post('/journal', async (ctx) => {
+router.post('/miscellaneous/journal', async (ctx) => {
   const client = pool.promise();
   const [result] = await client.execute(`
   insert into logbook (ref_id, ref_id2, dtime, detail)
