@@ -2,9 +2,7 @@ import FlakeId from 'flake-idgen';
 import JSONbig from 'json-bigint';
 import Router from '@koa/router';
 
-import {
-  DATACENTER_ID, WORKER_ID, EPOCH,
-} from './configuration.mjs';
+import { DATACENTER_ID, WORKER_ID, EPOCH } from './configuration.mjs';
 import { pool } from './mysql.mjs';
 
 export const router = new Router();
@@ -12,9 +10,10 @@ export const router = new Router();
 export const getBulletin = async (option, data) => {
   const client = pool.promise();
   if (option === '') {
-    const [result] = await client.execute(`
+    const sql = `
     select * from bulletin order by id desc limit ${data.skip}, ${data.take}
-    `, []);
+    `;
+    const [result] = await client.execute(sql, []);
     return result;
   }
   return [];
@@ -35,7 +34,7 @@ export const saveBulletin = async (data) => {
   insert into bulletin (id, category, title, publish_time, expire_at, detail, misc)
       values (?, ?, ?, ?, ?, ?, ?)
   `;
-  const [result] = await client.execute(sql, [
+  const param = [
     data.id,
     data.category,
     data.title,
@@ -43,7 +42,8 @@ export const saveBulletin = async (data) => {
     data.expireAt,
     data.detail || '{}',
     data.misc || '{}',
-  ]);
+  ];
+  const [result] = await client.execute(sql, param);
   return result;
 };
 

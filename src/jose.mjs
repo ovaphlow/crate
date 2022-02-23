@@ -2,7 +2,9 @@
 import jose from 'jose';
 
 async function jwtMethod() {
-  const { publicKey, privateKey } = await jose.generateKeyPair('ES256', { kty: 'EC' });
+  const { publicKey, privateKey } = await jose.generateKeyPair('ES256', {
+    kty: 'EC',
+  });
   console.log(publicKey);
   console.log(privateKey);
   const pubk = await jose.exportSPKI(publicKey);

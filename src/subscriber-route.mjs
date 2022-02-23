@@ -6,7 +6,12 @@ import * as jose from 'jose';
 import FlakeId from 'flake-idgen';
 
 import {
-  PRIVATE_KEY, PUBLIC_KEY, DATACENTER_ID, WORKER_ID, EPOCH, SECRET,
+  PRIVATE_KEY,
+  PUBLIC_KEY,
+  DATACENTER_ID,
+  WORKER_ID,
+  EPOCH,
+  SECRET,
 } from './configuration.mjs';
 import { pool } from './mysql.mjs';
 import { repository, signUp } from './subscriber-repository.mjs';
@@ -90,7 +95,7 @@ router.post('/subscriber/refresh-token', async (ctx) => {
 
 router.get('/subscriber/:id', async (ctx) => {
   const client = pool.promise();
-  const [result] = await client.execute(`
+  const sql = `
   select id
       , username
       , detail->>'$.name' name
@@ -98,40 +103,39 @@ router.get('/subscriber/:id', async (ctx) => {
   from subscriber
   where id = ?
       and detail->>'$.uuid' = ?
-  `, [
-    parseInt(ctx.params.id, 10),
-    ctx.request.query.uuid,
-  ]);
+  `;
+  const param = [parseInt(ctx.params.id, 10), ctx.request.query.uuid];
+  const [result] = await client.execute(sql, param);
   ctx.response.body = result.length === 1 ? result[0] : {};
 });
 
 router.put('/subscriber/:id', async (ctx) => {
   const client = pool.promise();
-  const [result] = await client.execute(`
+  const sql = `
   update subscriber
   set username = ?
       , detail = json_set(detail, '$.name', ?)
   where id = ?
       and detail->>'$.uuid' = ?
-  `, [
+  `;
+  const param = [
     ctx.request.body.username,
     ctx.request.body.name,
     parseInt(ctx.params.id, 10),
     ctx.request.query.uuid,
-  ]);
+  ];
+  const [result] = await client.execute(sql, param);
   ctx.response.body = result;
 });
 
 router.delete('/subscriber/:id', async (ctx) => {
   const client = pool.promise();
-  const [result] = await client.execute(`
+  const sql = `
   delete from subscriber
-  where id = ?
-      and detail->>'$.uuid' = ?
-  `, [
-    parseInt(ctx.params.id, 10),
-    ctx.request.query.uuid || '',
-  ]);
+  where id = ?  and detail->>'$.uuid' = ?
+  `;
+  const param = [parseInt(ctx.params.id, 10), ctx.request.query.uuid || ''];
+  const [result] = await client.execute(sql, param);
   ctx.response.body = result;
 });
 
@@ -139,7 +143,7 @@ router.get('/subscriber', async (ctx) => {
   const client = pool.promise();
   const option = ctx.request.query.option || '';
   if (option === 'tag') {
-    const [result] = await client.execute(`
+    const sql = `
     select id
         , username
         , detail->>'$.name' name
@@ -148,23 +152,28 @@ router.get('/subscriber', async (ctx) => {
     where detail->>'$.tag' = ?
     order by id desc
     limit 20
-    `, [ctx.request.query.tag]);
+    `;
+    const param = [ctx.request.query.tag];
+    const [result] = await client.execute(sql, param);
     ctx.response.body = result;
   } else ctx.response.body = [];
 });
 
 router.post('/subscriber', async (ctx) => {
   const client = pool.promise();
-  let [result] = await client.execute(`
+  let sql = `
   select count(*) qty from subscriber where username = ?
-  `, [ctx.request.body.username]);
+  `;
+  let param = [ctx.request.body.username];
+  let [result] = await client.execute(sql, param);
   if (result[0].qty !== 0) {
     ctx.response.status = 401;
     return;
   }
-  [result] = await client.execute(`
+  sql = `
   insert into subscriber (username, detail) values(?, ?)
-  `, [
+  `;
+  param = [
     ctx.request.body.username,
     JSON.stringify({
       uuid: uuidv5(ctx.request.body.username, Buffer.from(SECRET)),
@@ -172,6 +181,7 @@ router.post('/subscriber', async (ctx) => {
       password: ctx.request.body.password,
       tag: ctx.request.body.tag,
     }),
-  ]);
+  ];
+  [result] = await client.execute(sql, param);
   ctx.response.body = result;
 });

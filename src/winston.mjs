@@ -10,9 +10,8 @@ export const logger /*: any */ = winston.createLogger({
         winston.format.label({ label: 'crate' }),
         winston.format.timestamp(),
         winston.format.printf(
-          ({
-            level, message, label, timestamp,
-          }) => `${timestamp} [${label}] ${level}: ${message}`,
+          ({ level, message, label, timestamp }) =>
+            `${timestamp} [${label}] ${level}: ${message}`,
         ),
       ),
     }),

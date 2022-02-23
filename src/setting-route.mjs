@@ -10,7 +10,7 @@ router.get('/setting', async (ctx) => {
   const client = pool.promise();
   const option = ctx.request.query.option || '';
   if (option === 'by-category') {
-    const [result] = await client.execute(`
+    const sql = `
     select id
         , category
         , ref_id
@@ -19,10 +19,12 @@ router.get('/setting', async (ctx) => {
         , detail->>'$.name' name
     from setting
     where category = ?
-    `, [ctx.request.query.category]);
+    `;
+    const param = [ctx.request.query.category];
+    const [result] = await client.execute(sql, param);
     ctx.response.body = result;
   } else if (option === 'category') {
-    const [result] = await client.execute(`
+    const sql = `
     select id
         , category
         , ref_id
@@ -32,7 +34,9 @@ router.get('/setting', async (ctx) => {
     from setting
     where category = ?
         and ref_id = 0
-    `, [ctx.request.query.category]);
+    `;
+    const param = [ctx.request.query.category];
+    const [result] = await client.execute(sql, param);
     ctx.response.body = result;
   }
 });

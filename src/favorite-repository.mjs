@@ -2,16 +2,16 @@ import { pool } from './mysql.mjs';
 
 export const remove = async (data) => {
   const client = pool.promise();
-  const [result] = await client.execute(`
-  delete from favorite where id = ?
-  `, [data.id]);
+  const sql = 'delete from favorite where id = ?';
+  const param = [data.id];
+  const [result] = await client.execute(sql, param);
   return result;
 };
 
 export const filter = async (option, data) => {
   const client = pool.promise();
   if (option === 'ref_id-and-tag') {
-    const [result] = await client.execute(`
+    const sql = `
     select id
         , ref_id
         , ref_id2
@@ -25,7 +25,9 @@ export const filter = async (option, data) => {
         and detail->>'$.tag' = :tag
     order by id desc
     limit 100
-    `, [data.ref_id, data.tag]);
+    `;
+    const param = [data.ref_id, data.tag];
+    const [result] = await client.execute(sql, param);
     return result;
   }
   return [];

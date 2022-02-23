@@ -26,11 +26,13 @@ router.put('/feedback/:id', async (ctx) => {
       ctx.response.status = 500;
       return;
     }
-    await client.execute(`
+    const sql = `
       update feedback
       set detail = json_set(detail, '$.status', '已处理')
       where id = ?
-      `, [parseInt(ctx.params.id, 10)]);
+      `;
+    const param = [parseInt(ctx.params.id, 10)];
+    await client.execute(sql, param);
     ctx.response.status = 200;
   }
 });
@@ -39,7 +41,7 @@ router.get('/feedback', async (ctx) => {
   const client = pool.promise();
   const option = ctx.request.query.option || '';
   if (option === '') {
-    const [result] = await client.execute(`
+    const sql = `
     select id
         , ref_id user_id
         , dtime datime
@@ -52,10 +54,12 @@ router.get('/feedback', async (ctx) => {
     where detail->>'$.category' = ?
     order by id desc
     limit 100
-    `, [ctx.request.query.category]);
+    `;
+    const param = [ctx.request.query.category];
+    const [result] = await client.execute(sql, param);
     ctx.response.body = result;
   } else if (option === 'by-employer_id-and-tag') {
-    const [result] = await client.execute(`
+    const sql = `
     select id
         , ref_id
         , dtime
@@ -69,13 +73,15 @@ router.get('/feedback', async (ctx) => {
         and detail->>'$.tag' = ?
     order by id desc
     limit 10
-    `, [
+    `;
+    const param = [
       parseInt(ctx.request.query.id || 0, 10),
       ctx.request.query.tag || '',
-    ]);
+    ];
+    const [result] = await client.execute(sql, param);
     ctx.response.body = result;
   } else if (option === 'by-ref_id-tag') {
-    const [result] = await client.execute(`
+    const sql = `
     select id
         , ref_id
         , dtime
@@ -89,26 +95,31 @@ router.get('/feedback', async (ctx) => {
         and detail->>'$.tag' = ?
     order by id desc
     limit 20
-    `, [
+    `;
+    const param = [
       parseInt(ctx.request.query.ref_id, 10),
       ctx.request.query.tag || '',
-    ]);
+    ];
+    const [result] = await client.execute(sql, param);
     ctx.response.body = result;
   }
 });
 
 router.post('/feedback', async (ctx) => {
   const client = pool.promise();
-  const [result] = await client.execute(`
-  insert into feedback (ref_id, dtime, detail)
-    values(?, ?, json_object("ref_uuid", ?, "category", ?, "tag", ?, "content", ?))
-  `, [
+  const sql = `
+  insert into
+      feedback (ref_id, dtime, detail)
+      values (?, ?, json_object("ref_uuid", ?, "category", ?, "tag", ?, "content", ?))
+  `;
+  const param = [
     ctx.request.body.user_id,
     ctx.request.body.datime,
     ctx.request.body.user_uuid,
     ctx.request.body.category,
     ctx.request.body.user_category,
     ctx.request.body.content,
-  ]);
+  ];
+  const [result] = await client.execute(sql, param);
   ctx.response.body = result;
 });

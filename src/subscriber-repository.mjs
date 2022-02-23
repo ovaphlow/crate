@@ -6,11 +6,13 @@ export const repository = {
     if (option === '') {
       //
     } else if (option === 'for-auth') {
-      const [result] = await client.execute(`
+      const sql = `
       select id, username, detail->>'$.password' password, detail->>'$.salt' salt
       from subscriber
       where username = ?
-      `, [data.username]);
+      `;
+      const param = [data.username];
+      const [result] = await client.execute(sql, param);
       const [row] = result;
       return row;
     }
@@ -22,11 +24,13 @@ export const repository = {
     if (option === '') {
       //
     } else if (option === 'by-username') {
-      const [result] = await client.execute(`
+      const sql = `
       select id, username, detail->>'$.password' password, detail->>'$.salt' salt
       from subscriber
       where username = ?
-      `, [data.username]);
+      `;
+      const param = [data.username];
+      const [result] = await client.execute(sql, param);
       return result;
     }
     return [];
@@ -34,19 +38,25 @@ export const repository = {
 
   signUp: async (data) => {
     const client = pool.promise();
-    const [result] = await client.execute(`
-    insert into subscriber (id, username, detail)
+    const sql = `
+    insert into
+        subscriber (id, username, detail)
         values (?, ?, json_object('password', ?, 'salt', ?))
-    `, [data.id, data.username, data.password, data.salt]);
+    `;
+    const param = [data.id, data.username, data.password, data.salt];
+    const [result] = await client.execute(sql, param);
     return result;
   },
 };
 
 export const signUp = async (data) => {
   const client = pool.promise();
-  const [result] = await client.execute(`
-  insert into subscriber (id, username, detail)
+  const sql = `
+  insert into
+      subscriber (id, username, detail)
       values (?, ?, json_object('password', ?, 'salt', ?))
-  `, [data.id, data.username, data.password, data.salt]);
+  `;
+  const param = [data.id, data.username, data.password, data.salt];
+  const [result] = await client.execute(sql, param);
   return result;
 };

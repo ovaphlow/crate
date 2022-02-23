@@ -12,12 +12,16 @@ app.use(helmet());
 
 app.use(bodyParser({ jsonLimit: '16mb' }));
 
-app.use(rewrite(/^\/api\/miscellaneous\/setting(.*)/, '/api/crate/single/setting$1'));
+app.use(
+  rewrite(/^\/api\/miscellaneous\/setting(.*)/, '/api/crate/single/setting$1'),
+);
 
 // eslint-disable-next-line
-app.use(koaLogger((str, args) => {
-  logger.debug(str);
-}));
+app.use(
+  koaLogger((str, args) => {
+    logger.debug(str);
+  }),
+);
 
 // app.use(async (ctx, next) => {
 //   logger.info(`--> ${ctx.request.method} ${ctx.request.url}`);
