@@ -3,8 +3,16 @@ import bodyParser from 'koa-bodyparser';
 import helmet from 'koa-helmet';
 import koaLogger from 'koa-logger';
 import rewrite from 'koa-rewrite';
+import Router from '@koa/router';
 
 import { logger } from './winston.mjs';
+import { bulletinEndpointGet, bulletinEndpointPost } from './bulletin.mjs';
+import {
+  miscellaneousEndpointGet,
+  miscellaneousEndpointPut,
+  miscellaneousEndpointPost,
+  miscellaneousEndpointDelete,
+} from './miscellaneous.mjs';
 
 export const app = new Koa();
 
@@ -99,17 +107,38 @@ app.on('error', (err, ctx) => {
 })();
 
 (() => {
-  import('./bulletin.mjs').then(({ router }) => {
-    logger.info('加载 bulletin ...');
-    app.use(router.routes());
-    app.use(router.allowedMethods());
-  });
+  // import('./miscellaneous.mjs').then(({ router }) => {
+  //   logger.info('加载 miscellaneous ...');
+  //   app.use(router.routes());
+  //   app.use(router.allowedMethods());
+  // });
+})();
+
+const router = new Router({
+  prefix: '/api',
+});
+
+(() => {
+  // bulletin
+  router.get('/bulletin/simple/:id', bulletinEndpointGet);
+  router.get('/bulletin/simple', bulletinEndpointGet);
+  router.post('/bulletin/simple', bulletinEndpointPost);
 })();
 
 (() => {
-  import('./miscellaneous.mjs').then(({ router }) => {
-    logger.info('加载 miscellaneous ...');
-    app.use(router.routes());
-    app.use(router.allowedMethods());
-  });
+  // miscellaneous
+  // favorite, feedback, file, journal, message, setting
+  router.get('/miscellaneous/simple/:id', miscellaneousEndpointGet);
+  router.put('/miscellaneous/simple/:id', miscellaneousEndpointPut);
+  router.delete('/miscellaneous/simple/:id', miscellaneousEndpointDelete);
+  router.get('/miscellaneous/simple', miscellaneousEndpointGet);
+  router.post('/miscellaneous/simple', miscellaneousEndpointPost);
 })();
+
+(() => {
+  // staging
+  // captcha
+})();
+
+app.use(router.routes());
+app.use(router.allowedMethods());
