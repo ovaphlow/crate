@@ -13,6 +13,9 @@ import {
   miscellaneousEndpointPost,
   miscellaneousEndpointDelete,
 } from './miscellaneous.mjs';
+import {
+  stagingEndpointGet,
+} from './staging.mjs';
 
 export const app = new Koa();
 
@@ -138,6 +141,8 @@ const router = new Router({
 (() => {
   // staging
   // captcha
+  router.get('/staging/simple/:id', stagingEndpointGet);
+  router.get('/staging/simple', stagingEndpointGet);
 })();
 
 app.use(router.routes());
