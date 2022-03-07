@@ -13,9 +13,7 @@ import {
   miscellaneousEndpointPost,
   miscellaneousEndpointDelete,
 } from './miscellaneous.mjs';
-import {
-  stagingEndpointGet,
-} from './staging.mjs';
+import { stagingEndpointGet } from './staging.mjs';
 
 export const app = new Koa();
 
@@ -123,9 +121,9 @@ const router = new Router({
 
 (() => {
   // bulletin
-  router.get('/bulletin/simple/:id', bulletinEndpointGet);
-  router.get('/bulletin/simple', bulletinEndpointGet);
-  router.post('/bulletin/simple', bulletinEndpointPost);
+  router.get('/simple/bulletin/:id', bulletinEndpointGet);
+  router.get('/simple/bulletin', bulletinEndpointGet);
+  router.post('/simple/bulletin', bulletinEndpointPost);
 })();
 
 (() => {
