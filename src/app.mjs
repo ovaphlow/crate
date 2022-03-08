@@ -6,7 +6,7 @@ import rewrite from 'koa-rewrite';
 import Router from '@koa/router';
 
 import { logger } from './winston.mjs';
-import { bulletinEndpointGet, bulletinEndpointPost } from './bulletin.mjs';
+import { bulletinEndpointGet, bulletinEndpointPost } from './bulletin/bulletin-endpoint.mjs';
 import {
   miscellaneousEndpointGet,
   miscellaneousEndpointPut,
@@ -107,14 +107,6 @@ app.on('error', (err, ctx) => {
   });
 })();
 
-(() => {
-  // import('./miscellaneous.mjs').then(({ router }) => {
-  //   logger.info('加载 miscellaneous ...');
-  //   app.use(router.routes());
-  //   app.use(router.allowedMethods());
-  // });
-})();
-
 const router = new Router({
   prefix: '/api',
 });
@@ -129,18 +121,18 @@ const router = new Router({
 (() => {
   // miscellaneous
   // favorite, feedback, file, journal, message, setting
-  router.get('/miscellaneous/simple/:id', miscellaneousEndpointGet);
-  router.put('/miscellaneous/simple/:id', miscellaneousEndpointPut);
-  router.delete('/miscellaneous/simple/:id', miscellaneousEndpointDelete);
-  router.get('/miscellaneous/simple', miscellaneousEndpointGet);
-  router.post('/miscellaneous/simple', miscellaneousEndpointPost);
+  router.get('/simple/miscellaneous/:id', miscellaneousEndpointGet);
+  router.put('/simple/miscellaneous/:id', miscellaneousEndpointPut);
+  router.delete('/simple/miscellaneous/:id', miscellaneousEndpointDelete);
+  router.get('/simple/miscellaneous', miscellaneousEndpointGet);
+  router.post('/simple/miscellaneous', miscellaneousEndpointPost);
 })();
 
 (() => {
   // staging
   // captcha
-  router.get('/staging/simple/:id', stagingEndpointGet);
-  router.get('/staging/simple', stagingEndpointGet);
+  router.get('/simple/staging/:id', stagingEndpointGet);
+  router.get('/simple/staging', stagingEndpointGet);
 })();
 
 app.use(router.routes());
