@@ -1,3 +1,6 @@
+import FlakeId from 'flake-idgen';
+
+import { DATACENTER_ID, WORKER_ID, EPOCH } from '../configuration.mjs';
 import { bulletinRepositoryFilter, bulletinRepositorySave } from "./bulletin-repository.mjs";
 
 export const bulletinEndpointGet = async (ctx) => {
@@ -48,7 +51,7 @@ export const bulletinEndpointPost = async (ctx) => {
     epoch: EPOCH,
   });
   const fid = flakeIdGen.next();
-  const { title, expireAt, tag, detail } = ctx.request.body;
+  const { title, publishTime, expireAt, tag, detail } = ctx.request.body;
   const result = await bulletinRepositorySave({
     id: fid.readBigInt64BE(0),
     title,
