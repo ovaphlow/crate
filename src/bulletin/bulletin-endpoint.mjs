@@ -6,9 +6,7 @@ import { bulletinRepositoryFilter, bulletinRepositorySave } from "./bulletin-rep
 export const bulletinEndpointGet = async (ctx) => {
   const { id } = ctx.params;
   if (id) {
-    const result = await bulletinRepositoryFilter('filterBy-id', {
-      id: parseInt(id, 10),
-    });
+    const result = await bulletinRepositoryFilter('filterBy-id', { id });
     if (result.length) {
       const [row] = result;
       ctx.response.body = row;

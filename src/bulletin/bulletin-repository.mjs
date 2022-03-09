@@ -57,7 +57,8 @@ export const bulletinRepositoryFilter = async (option, data) => {
   }
   if (option === 'filterBy-id') {
     const sql = `
-    select * from bulletin where id = ?
+    select cast(id as char) id, title, publish_time, expire_at, tag, detail
+    from bulletin where id = ?
     `;
     const param = [data.id];
     const [result] = await client.execute(sql, param);
@@ -65,8 +66,9 @@ export const bulletinRepositoryFilter = async (option, data) => {
   }
   if (option === 'filterBy-tag') {
     const sql = `
-    select * from bulletin where json_contains(tag, ?)
-    order by id desc
+    select cast(id as char) id, title, publish_time, expire_at, tag, detail
+    from bulletin where json_contains(tag, ?)
+    order by publish_time desc
     limit ${data.skip}, ${data.take}
     `;
     const param = [data.tag];
