@@ -106,6 +106,16 @@ export const bulletinRepositoryUpdate = async (data) => {
   return result;
 };
 
+export const bulletinRepositoryRemove = async (data) => {
+  const client = pool.promise();
+  const sql = `
+  delete from bulletin where id = ?
+  `;
+  const param = [data.id];
+  const [result] = await client.execute(sql, param);
+  return result;
+};
+
 export const bulletinRepositorySave = async (data) => {
   const client = pool.promise();
   const sql = `
