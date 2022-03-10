@@ -1,7 +1,7 @@
 import FlakeId from 'flake-idgen';
 
 import { DATACENTER_ID, WORKER_ID, EPOCH } from '../configuration.mjs';
-import { bulletinRepositoryFilter, bulletinRepositorySave } from "./bulletin-repository.mjs";
+import { bulletinRepositoryFilter, bulletinRepositoryUpdate, bulletinRepositorySave } from "./bulletin-repository.mjs";
 
 export const bulletinEndpointGet = async (ctx) => {
   const { id } = ctx.params;
@@ -40,6 +40,17 @@ export const bulletinEndpointGet = async (ctx) => {
       ctx.response.body = row;
     }
   }
+};
+
+export const bulletinEndpointPut = async (ctx) => {
+  const { id } = ctx.params;
+  const result = await bulletinRepositoryUpdate({
+    ...ctx.request.body,
+    id,
+  });
+  if (result.affectedRows === 1) {
+    ctx.response.status = 200;
+  } else ctx.response.status = 400;
 };
 
 export const bulletinEndpointPost = async (ctx) => {

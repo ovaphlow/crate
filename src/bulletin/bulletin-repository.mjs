@@ -87,6 +87,25 @@ export const bulletinRepositoryFilter = async (option, data) => {
   return [];
 };
 
+export const bulletinRepositoryUpdate = async (data) => {
+  const client = pool.promise();
+  const sql = `
+  update bulletin
+  set title = ?, publish_time = ?, expire_at = ?, tag = ?, detail = ?
+  where id = ?
+  `;
+  const param = [
+    data.title,
+    data.publishTime,
+    data.expireAt,
+    data.tag,
+    data.detail,
+    data.id,
+  ];
+  const [result] = await client.execute(sql, param);
+  return result;
+};
+
 export const bulletinRepositorySave = async (data) => {
   const client = pool.promise();
   const sql = `
