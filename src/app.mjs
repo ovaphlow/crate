@@ -6,7 +6,7 @@ import rewrite from 'koa-rewrite';
 import Router from '@koa/router';
 
 import { logger } from './winston.mjs';
-import { bulletinEndpointGet, bulletinEndpointPost, bulletinEndpointPut } from './bulletin/bulletin-endpoint.mjs';
+import { bulletinEndpointGet, bulletinEndpointPost, bulletinEndpointPut, bulletinEndpointDelete } from './bulletin/bulletin-endpoint.mjs';
 import {
   miscellaneousEndpointGet,
   miscellaneousEndpointPut,
@@ -115,6 +115,7 @@ const router = new Router({
   // bulletin
   router.get('/simple/bulletin/:id', bulletinEndpointGet);
   router.put('/simple/bulletin/:id', bulletinEndpointPut);
+  router.delete('/simple/bulletin/:id', bulletinEndpointDelete);
   router.get('/simple/bulletin', bulletinEndpointGet);
   router.post('/simple/bulletin', bulletinEndpointPost);
 })();

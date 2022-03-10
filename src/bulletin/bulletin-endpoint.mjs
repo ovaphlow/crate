@@ -1,7 +1,7 @@
 import FlakeId from 'flake-idgen';
 
 import { DATACENTER_ID, WORKER_ID, EPOCH } from '../configuration.mjs';
-import { bulletinRepositoryFilter, bulletinRepositoryUpdate, bulletinRepositorySave } from "./bulletin-repository.mjs";
+import { bulletinRepositoryFilter, bulletinRepositoryUpdate, bulletinRepositoryRemove, bulletinRepositorySave } from "./bulletin-repository.mjs";
 
 export const bulletinEndpointGet = async (ctx) => {
   const { id } = ctx.params;
@@ -53,6 +53,14 @@ export const bulletinEndpointPut = async (ctx) => {
   } else ctx.response.status = 400;
 };
 
+export const bulletinEndpointDelete = async (ctx) => {
+  const { id } = ctx.params;
+  const result = await bulletinRepositoryRemove({ id });
+  if (result.affectedRows === 1) {
+    ctx.response.status = 200;
+  } else ctx.response.status = 404;
+};
+
 export const bulletinEndpointPost = async (ctx) => {
   const flakeIdGen = new FlakeId({
     datacenter: DATACENTER_ID,
@@ -64,7 +72,7 @@ export const bulletinEndpointPost = async (ctx) => {
   const result = await bulletinRepositorySave({
     id: fid.readBigInt64BE(0),
     title,
-    publishTime: new Date(),
+    publishTime: publishTime || new Date(),
     expireAt: new Date(expireAt),
     tag,
     detail,
