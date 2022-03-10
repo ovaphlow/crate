@@ -43,6 +43,18 @@ router.get('/api/miscellaneous/simple/file/:id', async (ctx) => {
   }
 });
 
+router.patch('/api/miscellaneous/simple/file/:id', async (ctx) => {
+  const { option } = ctx.request.query;
+  if (option === 'filterBy-ref') {
+    const { id } = ctx.params;
+    const result = await getFile('by-ref', { refId: id });
+    if (result.length === 1) {
+      const [row] = result;
+      ctx.response.body = row;
+    } else ctx.response.status = 404;
+  }
+})
+
 export const updateFile = async (data) => {
   const client = pool.promise();
   const sql = `
