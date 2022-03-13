@@ -58,7 +58,8 @@ export const bulletinRepositoryFilter = async (option, data) => {
   if (option === 'filterBy-id') {
     const sql = `
     select cast(id as char) id, title, publish_time, expire_at, tag, detail
-    from bulletin where id = ?
+    from bulletin
+    where id = ?
     `;
     const param = [data.id];
     const [result] = await client.execute(sql, param);
