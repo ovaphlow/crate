@@ -30,6 +30,16 @@ export const bulletinEndpointGet = async (ctx) => {
       });
       ctx.response.body = result;
     }
+    if (option === 'filterBy-tag-detail') {
+      const { tag, detail, skip, take } = ctx.request.query;
+      const result = await bulletinRepositoryFilter(option, {
+        tag,
+        detail,
+        skip: parseInt(skip, 10) || 0,
+        take: parseInt(take, 10) || 10,
+      });
+      ctx.response.body = result;
+    }
     if (option === 'statsBy-today-total') {
       const { tag } = ctx.request.query;
       const result = await bulletinRepositoryFilter(option, {
