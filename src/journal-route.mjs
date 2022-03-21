@@ -44,7 +44,6 @@ router.get('/miscellaneous/simple/journal', async (ctx) => {
   if (option === 'countBy-refId2-detail') {
     const { refId2, detail } = ctx.request.query;
     const result = await countJournalByRefId2Detail({ refId2, detail });
-    console.log(result, 'result');
     ctx.response.body = result;
   }
   if (option === 'countBy-refId2-detail-groupBy-refId') {

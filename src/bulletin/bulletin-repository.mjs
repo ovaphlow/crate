@@ -86,7 +86,6 @@ export const bulletinRepositoryFilter = async (option, data) => {
     order by publish_time desc
     limit ${data.skip}, ${data.take}
     `;
-    console.log(data)
     const param = [data.tag, data.detail];
     const [result] = await client.execute(sql, param);
     return result;
