@@ -50,7 +50,10 @@ export const bulletinRepositoryFilter = async (option, data) => {
   const client = pool.promise();
   if (option === '') {
     const sql = `
-    select * from bulletin order by id desc limit ${data.skip}, ${data.take}
+    select cast(id as char) id, title, publish_time, expire_at, tag, detail
+    from bulletin
+    order by publish_time desc, expire_at desc
+    limit ${data.skip}, ${data.take}
     `;
     const [result] = await client.execute(sql, []);
     return result;
