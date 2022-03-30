@@ -6,7 +6,12 @@ import rewrite from 'koa-rewrite';
 import Router from '@koa/router';
 
 import { logger } from './winston.mjs';
-import { bulletinEndpointGet, bulletinEndpointPost, bulletinEndpointPut, bulletinEndpointDelete } from './bulletin/bulletin-endpoint.mjs';
+import {
+  bulletinEndpointGet,
+  bulletinEndpointPost,
+  bulletinEndpointPut,
+  bulletinEndpointDelete,
+} from './bulletin/bulletin-endpoint.mjs';
 import {
   miscellaneousEndpointGet,
   miscellaneousEndpointPut,
@@ -14,6 +19,7 @@ import {
   miscellaneousEndpointDelete,
 } from './miscellaneous.mjs';
 import { stagingEndpointGet } from './staging.mjs';
+import { complexEndpointBulletinJournal } from './complex/complex-endpoint.mjs';
 
 export const app = new Koa();
 
@@ -76,7 +82,7 @@ app.on('error', (err, ctx) => {
 })();
 
 (() => {
-  import('./journal-route.mjs').then(({ router }) => {
+  import('./journal/journal-endpoint.mjs').then(({ router }) => {
     logger.info('加载 journal ...');
     app.use(router.routes());
     app.use(router.allowedMethods());
@@ -110,6 +116,10 @@ app.on('error', (err, ctx) => {
 const router = new Router({
   prefix: '/api',
 });
+
+(() => {
+  router.get('/complex/bulletin-journal', complexEndpointBulletinJournal);
+})();
 
 (() => {
   // bulletin

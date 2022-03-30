@@ -1,59 +1,13 @@
 import Router from '@koa/router';
 
-import { pool } from './mysql.mjs';
+import { pool } from '../mysql.mjs';
+import {
+  countJournalByRefId2Detail,
+  countJournalByRefId2DetailGroupByRefId,
+} from './journal-repository.mjs';
 
 export const router = new Router({
   prefix: '/api',
-});
-
-// 总数
-export const countJournalByRefId2Detail = async (data) => {
-  const client = pool.promise();
-  const sql = `
-  select count(*) qty
-  from logbook
-  where ref_id2 = ?
-      and json_contains(detail, ?) = true
-  `;
-  const param = [data.refId2, data.detail];
-  const [result] = await client.execute(sql, param);
-  const [row] = result;
-  return row;
-};
-
-// refId数
-export const countJournalByRefId2DetailGroupByRefId = async (data) => {
-  const client = pool.promise();
-  const sql = `
-  select count(*) qty
-  from (
-      select distinct id
-      from ovaphlow.logbook
-      where ref_id2 = ?
-          and json_contains(detail, ?) = true
-      group by ref_id) t
-  `;
-  const param = [data.refId2, data.detail];
-  const [result] = await client.execute(sql, param);
-  const [row] = result;
-  return row;
-};
-
-router.get('/miscellaneous/simple/journal', async (ctx) => {
-  const { option } = ctx.request.query;
-  if (option === 'countBy-refId2-detail') {
-    const { refId2, detail } = ctx.request.query;
-    const result = await countJournalByRefId2Detail({ refId2, detail });
-    ctx.response.body = result;
-  }
-  if (option === 'countBy-refId2-detail-groupBy-refId') {
-    const { refId2, detail } = ctx.request.query;
-    const result = await countJournalByRefId2DetailGroupByRefId({
-      refId2,
-      detail,
-    });
-    ctx.response.body = result;
-  }
 });
 
 router.get('/miscellaneous/journal', async (ctx) => {

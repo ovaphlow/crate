@@ -53,7 +53,7 @@ router.patch('/api/miscellaneous/simple/file/:id', async (ctx) => {
       ctx.response.body = row;
     } else ctx.response.status = 404;
   }
-})
+});
 
 export const updateFile = async (data) => {
   const client = pool.promise();

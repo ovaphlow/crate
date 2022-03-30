@@ -1,7 +1,12 @@
 import FlakeId from 'flake-idgen';
 
 import { DATACENTER_ID, WORKER_ID, EPOCH } from '../configuration.mjs';
-import { bulletinRepositoryFilter, bulletinRepositoryUpdate, bulletinRepositoryRemove, bulletinRepositorySave } from "./bulletin-repository.mjs";
+import {
+  bulletinRepositoryFilter,
+  bulletinRepositoryUpdate,
+  bulletinRepositoryRemove,
+  bulletinRepositorySave,
+} from './bulletin-repository.mjs';
 
 export const bulletinEndpointGet = async (ctx) => {
   const { id } = ctx.params;
