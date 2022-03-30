@@ -1,10 +1,6 @@
 import Router from '@koa/router';
 
 import { pool } from '../mysql.mjs';
-import {
-  countJournalByRefId2Detail,
-  countJournalByRefId2DetailGroupByRefId,
-} from './journal-repository.mjs';
 
 export const router = new Router({
   prefix: '/api',
