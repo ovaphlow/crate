@@ -1,27 +1,27 @@
-import Router from '@koa/router';
+import Router from "@koa/router";
 
-import { remove, filter } from './favorite-repository.mjs';
-import { pool } from './mysql.mjs';
+import { remove, filter } from "./favorite-repository.mjs";
+import { pool } from "./mysql.mjs";
 
 export const router = new Router({
-  prefix: '/api/miscellaneous',
+  prefix: "/api/miscellaneous",
 });
 
-router.delete('/favorite/:id', async (ctx) => {
+router.delete("/favorite/:id", async (ctx) => {
   const result = await remove({ id: parseInt(ctx.params.id || 0, 10) });
   ctx.response.body = result;
 });
 
-router.get('/favorite', async (ctx) => {
+router.get("/favorite", async (ctx) => {
   const client = pool.promise();
-  const option = ctx.request.query.option || '';
-  if (option === 'ref_id-and-tag') {
+  const option = ctx.request.query.option || "";
+  if (option === "ref_id-and-tag") {
     const result = await filter(option, {
       ref_id: parseInt(ctx.request.query.id, 10),
       tag: ctx.request.query.tag,
     });
     ctx.response.body = result;
-  } else if (option === 'by-ref_id-category-tag') {
+  } else if (option === "by-ref_id-category-tag") {
     const sql = `
     select id
         , ref_id
@@ -45,7 +45,7 @@ router.get('/favorite', async (ctx) => {
     ];
     const [result] = await client.execute(sql, param);
     ctx.response.body = result;
-  } else if (option === 'by-ref_id-ref_id2-category-tag') {
+  } else if (option === "by-ref_id-ref_id2-category-tag") {
     const sql = `
     select id
         , ref_id
@@ -72,7 +72,7 @@ router.get('/favorite', async (ctx) => {
   }
 });
 
-router.post('/favorite', async (ctx) => {
+router.post("/favorite", async (ctx) => {
   const client = pool.promise();
   const sql = `
   insert into favorite (ref_id, ref_id2, dtime, detail)

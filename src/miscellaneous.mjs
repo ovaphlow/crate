@@ -1,16 +1,16 @@
-import FlakeId from 'flake-idgen';
+import FlakeId from "flake-idgen";
 // import JSONbig from 'json-bigint';
-import Router from '@koa/router';
+import Router from "@koa/router";
 
-import { DATACENTER_ID, WORKER_ID, EPOCH } from './configuration.mjs';
-import { pool } from './mysql.mjs';
+import { DATACENTER_ID, WORKER_ID, EPOCH } from "./configuration.mjs";
+import { pool } from "./mysql.mjs";
 
 export const router = new Router();
 
 export const miscellaneousEndpointGet = async (ctx) => {
   const { id } = ctx.params;
   if (id) {
-    const result = await miscellaneousRepositoryFilter('filterBy-id', {
+    const result = await miscellaneousRepositoryFilter("filterBy-id", {
       id: parseInt(id, 10),
     });
     if (result.length) {
@@ -19,7 +19,7 @@ export const miscellaneousEndpointGet = async (ctx) => {
     } else ctx.response.status = 404;
   } else {
     const { option, skip, take } = ctx.request.query;
-    if (option === 'filterBy-tag') {
+    if (option === "filterBy-tag") {
       const { tag, skip, take } = ctx.request.query;
       const result = await miscellaneousRepositoryFilter(option, {
         tag,
@@ -28,7 +28,7 @@ export const miscellaneousEndpointGet = async (ctx) => {
       });
       ctx.response.body = result;
     }
-    if (option === 'filterBy-refId-tag') {
+    if (option === "filterBy-refId-tag") {
       const { refId, tag, skip, take } = ctx.request.query;
       const result = await miscellaneousRepositoryFilter(option, {
         refId: parseInt(refId, 10),
@@ -38,7 +38,7 @@ export const miscellaneousEndpointGet = async (ctx) => {
       });
       ctx.response.body = result;
     }
-    if (option === 'filterBy-refId-ref2Id-tag') {
+    if (option === "filterBy-refId-ref2Id-tag") {
       const { refId, ref2Id, tag, skip, take } = ctx.request.query;
       const result = await miscellaneousRepositoryFilter(option, {
         refId: parseInt(refId, 10),
@@ -95,7 +95,7 @@ export const miscellaneousEndpointDelete = async (ctx) => {
 };
 
 export const miscellaneousRepositoryFilter = async (option, data) => {
-  if (option === 'filterBy-id') {
+  if (option === "filterBy-id") {
     const client = pool.promise();
     const sql = `
     select *
@@ -106,7 +106,7 @@ export const miscellaneousRepositoryFilter = async (option, data) => {
     const [result] = await client.execute(sql, param);
     return result;
   }
-  if (option === 'filterBy-tag') {
+  if (option === "filterBy-tag") {
     const client = pool.promise();
     const sql = `
     select *
@@ -119,7 +119,7 @@ export const miscellaneousRepositoryFilter = async (option, data) => {
     const [result] = await client.execute(sql, param);
     return result;
   }
-  if (option === 'filterBy-refId-tag') {
+  if (option === "filterBy-refId-tag") {
     const client = pool.promise();
     const sql = `
     select *
@@ -132,7 +132,7 @@ export const miscellaneousRepositoryFilter = async (option, data) => {
     const [result] = await client.execute(sql, param);
     return result;
   }
-  if (option === 'filterBy-refId-ref2Id-tag') {
+  if (option === "filterBy-refId-ref2Id-tag") {
     const client = pool.promise();
     const sql = `
     select *
@@ -173,7 +173,7 @@ export const miscellaneousRepositoryUpdate = async (data) => {
 
 export const miscellaneousRepositoryRemove = async (data) => {
   const client = pool.promise();
-  const sql = 'delete from miscellaneous where id = ?';
+  const sql = "delete from miscellaneous where id = ?";
   const param = [data.id];
   const [result] = await client.execute(sql, param);
   return result;
@@ -191,8 +191,8 @@ export const miscellaneousRepositorySave = async (data) => {
     data.refId,
     data.ref2Id,
     data.publishTime,
-    data.tag || '[]',
-    data.detail || '{}',
+    data.tag || "[]",
+    data.detail || "{}",
   ];
   const [result] = await client.execute(sql, param);
   return result;

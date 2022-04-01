@@ -1,15 +1,15 @@
-import Router from '@koa/router';
+import Router from "@koa/router";
 
-import { pool } from '../mysql.mjs';
+import { pool } from "../mysql.mjs";
 
 export const router = new Router({
-  prefix: '/api',
+  prefix: "/api",
 });
 
-router.get('/miscellaneous/journal', async (ctx) => {
+router.get("/miscellaneous/journal", async (ctx) => {
   const client = pool.promise();
-  const option = ctx.request.query.option || '';
-  if (option === 'by-ref_id-tag') {
+  const option = ctx.request.query.option || "";
+  if (option === "by-ref_id-tag") {
     const sql = `
     select id
         , ref_id
@@ -28,11 +28,11 @@ router.get('/miscellaneous/journal', async (ctx) => {
     `;
     const param = [
       parseInt(ctx.request.query.ref_id || 0, 10),
-      ctx.request.query.tag || '',
+      ctx.request.query.tag || "",
     ];
     const [result] = await client.execute(sql, param);
     ctx.response.body = result;
-  } else if (option === 'by-ref_id-category-tag') {
+  } else if (option === "by-ref_id-category-tag") {
     const sql = `
     select id
         , ref_id
@@ -52,12 +52,12 @@ router.get('/miscellaneous/journal', async (ctx) => {
     `;
     const param = [
       parseInt(ctx.request.query.ref_id, 10),
-      ctx.request.query.category || '',
-      ctx.request.query.tag || '',
+      ctx.request.query.category || "",
+      ctx.request.query.tag || "",
     ];
     const [result] = await client.execute(sql, param);
     ctx.response.body = result;
-  } else if (option === 'ref_id-tag-date') {
+  } else if (option === "ref_id-tag-date") {
     const sql = `
     select id
         , ref_id
@@ -85,7 +85,7 @@ router.get('/miscellaneous/journal', async (ctx) => {
   } else ctx.response.body = [];
 });
 
-router.post('/miscellaneous/journal', async (ctx) => {
+router.post("/miscellaneous/journal", async (ctx) => {
   const client = pool.promise();
   const sql = `
   insert into

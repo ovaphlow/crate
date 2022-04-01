@@ -1,11 +1,11 @@
-import { pool } from './mysql.mjs';
+import { pool } from "./mysql.mjs";
 
 export const repository = {
   get: async (option, data) => {
     const client = pool.promise();
-    if (option === '') {
+    if (option === "") {
       //
-    } else if (option === 'for-auth') {
+    } else if (option === "for-auth") {
       const sql = `
       select id, username, detail->>'$.password' password, detail->>'$.salt' salt
       from subscriber
@@ -21,9 +21,9 @@ export const repository = {
 
   filter: async (option, data) => {
     const client = pool.promise();
-    if (option === '') {
+    if (option === "") {
       //
-    } else if (option === 'by-username') {
+    } else if (option === "by-username") {
       const sql = `
       select id, username, detail->>'$.password' password, detail->>'$.salt' salt
       from subscriber

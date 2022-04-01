@@ -1,8 +1,8 @@
-import { pool } from './mysql.mjs';
+import { pool } from "./mysql.mjs";
 
 export const saveMessage = async (option, data) => {
   const client = pool.promise();
-  if (option === 'reply') {
+  if (option === "reply") {
     const sql = `
     insert into message (ref_id, ref_id2, dtime, detail)
     values(0, ?, ?, ?)

@@ -1,9 +1,9 @@
-import { pool } from './mysql.mjs';
+import { pool } from "./mysql.mjs";
 
 export const repository = {
   filter: async (option, data) => {
     const client = pool.promise();
-    if (option === 'check-by-email-code') {
+    if (option === "check-by-email-code") {
       const sql = `
       select id
       from captcha

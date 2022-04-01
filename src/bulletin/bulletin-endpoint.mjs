@@ -1,32 +1,32 @@
-import FlakeId from 'flake-idgen';
+import FlakeId from "flake-idgen";
 
-import { DATACENTER_ID, WORKER_ID, EPOCH } from '../configuration.mjs';
+import { DATACENTER_ID, WORKER_ID, EPOCH } from "../configuration.mjs";
 import {
   bulletinRepositoryFilter,
   bulletinRepositoryUpdate,
   bulletinRepositoryRemove,
   bulletinRepositorySave,
-} from './bulletin-repository.mjs';
+} from "./bulletin-repository.mjs";
 
 export const bulletinEndpointGet = async (ctx) => {
   const { id } = ctx.params;
   if (id) {
-    const result = await bulletinRepositoryFilter('filterBy-id', { id });
+    const result = await bulletinRepositoryFilter("filterBy-id", { id });
     if (result.length) {
       const [row] = result;
       ctx.response.body = row;
     } else ctx.response.status = 404;
   } else {
     const { option } = ctx.request.query;
-    if (option === '') {
+    if (option === "") {
       const { skip, take } = ctx.request.query;
-      const result = await bulletinRepositoryFilter(option || '', {
+      const result = await bulletinRepositoryFilter(option || "", {
         take: parseInt(take, 10) || 10,
         skip: parseInt(skip, 10) || 0,
       });
       ctx.response.body = result;
     }
-    if (option === 'filterBy-tag') {
+    if (option === "filterBy-tag") {
       const { tag, skip, take } = ctx.request.query;
       const result = await bulletinRepositoryFilter(option, {
         tag,
@@ -35,7 +35,7 @@ export const bulletinEndpointGet = async (ctx) => {
       });
       ctx.response.body = result;
     }
-    if (option === 'filterBy-tag-detail') {
+    if (option === "filterBy-tag-detail") {
       const { tag, detail, skip, take } = ctx.request.query;
       const result = await bulletinRepositoryFilter(option, {
         tag,
@@ -45,11 +45,11 @@ export const bulletinEndpointGet = async (ctx) => {
       });
       ctx.response.body = result;
     }
-    if (option === 'statsBy-today-total') {
+    if (option === "statsBy-today-total") {
       const { tag } = ctx.request.query;
       const result = await bulletinRepositoryFilter(option, {
         tag,
-        date: dayjs().format('YYYY-MM-DD'),
+        date: dayjs().format("YYYY-MM-DD"),
       });
       const [row] = result;
       ctx.response.body = row;

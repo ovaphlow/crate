@@ -1,4 +1,4 @@
-import { pool } from '../mysql.mjs';
+import { pool } from "../mysql.mjs";
 
 /*
 -- banner
@@ -48,7 +48,7 @@ from billboard.job_fair;
 
 export const bulletinRepositoryFilter = async (option, data) => {
   const client = pool.promise();
-  if (option === '') {
+  if (option === "") {
     const sql = `
     select cast(id as char) id, title, publish_time, expire_at, tag, detail
     from bulletin
@@ -58,7 +58,7 @@ export const bulletinRepositoryFilter = async (option, data) => {
     const [result] = await client.execute(sql, []);
     return result;
   }
-  if (option === 'filterBy-id') {
+  if (option === "filterBy-id") {
     const sql = `
     select cast(id as char) id, title, publish_time, expire_at, tag, detail
     from bulletin
@@ -68,7 +68,7 @@ export const bulletinRepositoryFilter = async (option, data) => {
     const [result] = await client.execute(sql, param);
     return result;
   }
-  if (option === 'filterBy-tag') {
+  if (option === "filterBy-tag") {
     const sql = `
     select cast(id as char) id, title, publish_time, expire_at, tag, detail
     from bulletin
@@ -80,7 +80,7 @@ export const bulletinRepositoryFilter = async (option, data) => {
     const [result] = await client.execute(sql, param);
     return result;
   }
-  if (option === 'filterBy-tag-detail') {
+  if (option === "filterBy-tag-detail") {
     const sql = `
     select cast(id as char) id, title, publish_time, expire_at, tag, detail
     from bulletin
@@ -93,7 +93,7 @@ export const bulletinRepositoryFilter = async (option, data) => {
     const [result] = await client.execute(sql, param);
     return result;
   }
-  if (option === 'statsBy-today-total') {
+  if (option === "statsBy-today-total") {
     const sql = `
 		select (select count(*) from bulletin where json_contains(tag, ?) = true) total
         , (select count(*) from bulletin where position(? in publish_time) > 0 and json_contains(tag, ?) = true) today
@@ -145,8 +145,8 @@ export const bulletinRepositorySave = async (data) => {
     data.title,
     data.publishTime,
     data.expireAt,
-    data.tag || '{}', // json格式不允许有默认值，所以在没传数据的情况下要赋一个默认值'{}'
-    data.detail || '{}',
+    data.tag || "{}", // json格式不允许有默认值，所以在没传数据的情况下要赋一个默认值'{}'
+    data.detail || "{}",
   ];
   const [result] = await client.execute(sql, param);
   return result;

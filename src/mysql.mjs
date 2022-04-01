@@ -1,5 +1,5 @@
 // @flow
-import mysql from 'mysql2';
+import mysql from "mysql2";
 
 import {
   DB_HOST,
@@ -7,7 +7,7 @@ import {
   DB_PASSWORD,
   DB_NAME,
   PROC,
-} from './configuration.mjs';
+} from "./configuration.mjs";
 
 export const pool /*: any */ = mysql.createPool({
   host: DB_HOST,

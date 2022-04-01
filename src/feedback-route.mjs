@@ -1,21 +1,21 @@
-import Router from '@koa/router';
+import Router from "@koa/router";
 
-import { saveMessage } from './message-repository.mjs';
-import { pool } from './mysql.mjs';
+import { saveMessage } from "./message-repository.mjs";
+import { pool } from "./mysql.mjs";
 
 export const router = new Router({
-  prefix: '/api/miscellaneous',
+  prefix: "/api/miscellaneous",
 });
 
-router.put('/feedback/:id', async (ctx) => {
+router.put("/feedback/:id", async (ctx) => {
   const client = pool.promise();
-  const option = ctx.request.query.option || '';
-  if (option === 'reply') {
+  const option = ctx.request.query.option || "";
+  if (option === "reply") {
     const result = saveMessage(option, {
       id: ctx.request.body.user_id,
       dtime: ctx.request.body.datime,
       detail: JSON.stringify({
-        status: '未读',
+        status: "未读",
         category: ctx.request.body.category,
         title: ctx.request.body.title,
         content: ctx.request.body.content,
@@ -37,10 +37,10 @@ router.put('/feedback/:id', async (ctx) => {
   }
 });
 
-router.get('/feedback', async (ctx) => {
+router.get("/feedback", async (ctx) => {
   const client = pool.promise();
-  const option = ctx.request.query.option || '';
-  if (option === '') {
+  const option = ctx.request.query.option || "";
+  if (option === "") {
     const sql = `
     select id
         , ref_id user_id
@@ -58,7 +58,7 @@ router.get('/feedback', async (ctx) => {
     const param = [ctx.request.query.category];
     const [result] = await client.execute(sql, param);
     ctx.response.body = result;
-  } else if (option === 'by-employer_id-and-tag') {
+  } else if (option === "by-employer_id-and-tag") {
     const sql = `
     select id
         , ref_id
@@ -76,11 +76,11 @@ router.get('/feedback', async (ctx) => {
     `;
     const param = [
       parseInt(ctx.request.query.id || 0, 10),
-      ctx.request.query.tag || '',
+      ctx.request.query.tag || "",
     ];
     const [result] = await client.execute(sql, param);
     ctx.response.body = result;
-  } else if (option === 'by-ref_id-tag') {
+  } else if (option === "by-ref_id-tag") {
     const sql = `
     select id
         , ref_id
@@ -98,14 +98,14 @@ router.get('/feedback', async (ctx) => {
     `;
     const param = [
       parseInt(ctx.request.query.ref_id, 10),
-      ctx.request.query.tag || '',
+      ctx.request.query.tag || "",
     ];
     const [result] = await client.execute(sql, param);
     ctx.response.body = result;
   }
 });
 
-router.post('/feedback', async (ctx) => {
+router.post("/feedback", async (ctx) => {
   const client = pool.promise();
   const sql = `
   insert into

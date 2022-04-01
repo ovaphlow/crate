@@ -1,15 +1,15 @@
-import { bulletinRepositoryFilter } from '../bulletin/bulletin-repository.mjs';
-import { filterByDetailRefId2DtimeRange } from '../journal/journal-repository.mjs';
+import { bulletinRepositoryFilter } from "../bulletin/bulletin-repository.mjs";
+import { filterByDetailRefId2DtimeRange } from "../journal/journal-repository.mjs";
 
 export const complexEndpointBulletinJournal = async (ctx) => {
   const { option } = ctx.request.query;
-  if (option === 'statsBulletin') {
+  if (option === "statsBulletin") {
     const { bulletinId } = ctx.request.query;
     if (!bulletinId > 0) {
       ctx.response.stauts = 400;
       return;
     }
-    const bulletinList = await bulletinRepositoryFilter('filterBy-id', {
+    const bulletinList = await bulletinRepositoryFilter("filterBy-id", {
       id: bulletinId,
     });
     if (bulletinList.length != 1) {
@@ -17,13 +17,13 @@ export const complexEndpointBulletinJournal = async (ctx) => {
       return;
     }
     const result = await filterByDetailRefId2DtimeRange({
-      detail: JSON.stringify({ category: '浏览招聘会' }),
+      detail: JSON.stringify({ category: "浏览招聘会" }),
       dtimeEnd: bulletinList[0].expire_at,
       dtimeBegin: bulletinList[0].publish_time,
       refId2: bulletinId,
     });
     const result1 = await filterByDetailRefId2DtimeRange({
-      detail: JSON.stringify({ category: '参加招聘会并浏览企业详情' }),
+      detail: JSON.stringify({ category: "参加招聘会并浏览企业详情" }),
       dtimeEnd: bulletinList[0].expire_at,
       dtimeBegin: bulletinList[0].publish_time,
       refId2: bulletinId,
@@ -35,7 +35,7 @@ export const complexEndpointBulletinJournal = async (ctx) => {
       }
     });
     const result2 = await filterByDetailRefId2DtimeRange({
-      detail: JSON.stringify({ category: '参加招聘会并投递简历' }),
+      detail: JSON.stringify({ category: "参加招聘会并投递简历" }),
       dtimeEnd: bulletinList[0].expire_at,
       dtimeBegin: bulletinList[0].publish_time,
       refId2: bulletinId,

@@ -1,8 +1,8 @@
-import { pool } from './mysql.mjs';
+import { pool } from "./mysql.mjs";
 
 export const remove = async (data) => {
   const client = pool.promise();
-  const sql = 'delete from favorite where id = ?';
+  const sql = "delete from favorite where id = ?";
   const param = [data.id];
   const [result] = await client.execute(sql, param);
   return result;
@@ -10,7 +10,7 @@ export const remove = async (data) => {
 
 export const filter = async (option, data) => {
   const client = pool.promise();
-  if (option === 'ref_id-and-tag') {
+  if (option === "ref_id-and-tag") {
     const sql = `
     select id
         , ref_id

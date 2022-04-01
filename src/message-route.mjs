@@ -1,15 +1,15 @@
-import Router from '@koa/router';
+import Router from "@koa/router";
 
-import { pool } from './mysql.mjs';
+import { pool } from "./mysql.mjs";
 
 export const router = new Router({
-  prefix: '/api/miscellaneous',
+  prefix: "/api/miscellaneous",
 });
 
-router.get('/message/statistic', async (ctx) => {
+router.get("/message/statistic", async (ctx) => {
   const client = pool.promise();
-  const option = ctx.request.query.option || '';
-  if (option === 'qty-by-ref_id2-category-tag-status') {
+  const option = ctx.request.query.option || "";
+  if (option === "qty-by-ref_id2-category-tag-status") {
     const sql = `
     select count(*) qty
     from message
@@ -30,10 +30,10 @@ router.get('/message/statistic', async (ctx) => {
   }
 });
 
-router.get('/message/:id', async (ctx) => {
+router.get("/message/:id", async (ctx) => {
   const client = pool.promise();
-  const option = ctx.request.query.option || '';
-  if (option === 'qty-by-ref_id2-status') {
+  const option = ctx.request.query.option || "";
+  if (option === "qty-by-ref_id2-status") {
     const sql = `
     select count(*) qty
     from message
@@ -49,10 +49,10 @@ router.get('/message/:id', async (ctx) => {
   }
 });
 
-router.put('/message/:id', async (ctx) => {
+router.put("/message/:id", async (ctx) => {
   const client = pool.promise();
-  const option = ctx.request.query.option || '';
-  if (option === 'status-by-ref_id2-and-tag') {
+  const option = ctx.request.query.option || "";
+  if (option === "status-by-ref_id2-and-tag") {
     const sql = `
     update message
     set detail = json_set(detail, '$.status', ?)
@@ -66,7 +66,7 @@ router.put('/message/:id', async (ctx) => {
     ];
     const [result] = await client.execute(sql, param);
     ctx.response.body = result;
-  } else if (option === 'status-by-id_list') {
+  } else if (option === "status-by-id_list") {
     const sql = `
     update message
     set detail = json_set(detail, '$.status', ?)
@@ -79,10 +79,10 @@ router.put('/message/:id', async (ctx) => {
   }
 });
 
-router.get('/message', async (ctx) => {
+router.get("/message", async (ctx) => {
   const client = pool.promise();
-  const option = ctx.request.query.option || '';
-  if (option === 'by-ref_id2-tag') {
+  const option = ctx.request.query.option || "";
+  if (option === "by-ref_id2-tag") {
     const sql = `
     select id
         , ref_id
@@ -105,7 +105,7 @@ router.get('/message', async (ctx) => {
     ];
     const [result] = await client.execute(sql, param);
     ctx.response.body = result;
-  } else if (option === 'by-ref_id2-category-tag-status') {
+  } else if (option === "by-ref_id2-category-tag-status") {
     const sql = `
     select id
         , ref_id
@@ -131,7 +131,7 @@ router.get('/message', async (ctx) => {
     ];
     const [result] = await client.execute(sql, param);
     ctx.response.body = result;
-  } else if (option === 'by-ref_id-ref_id2-category') {
+  } else if (option === "by-ref_id-ref_id2-category") {
     const sql = `
     select id
         , ref_id
@@ -158,7 +158,7 @@ router.get('/message', async (ctx) => {
     ];
     const [result] = await client.execute(sql, param);
     ctx.response.body = result;
-  } else if (option === 'ref_id2-and-tag') {
+  } else if (option === "ref_id2-and-tag") {
     const sql = `
     select id
         , ref_id
@@ -181,7 +181,7 @@ router.get('/message', async (ctx) => {
     ];
     const [result] = await client.execute(sql, param);
     ctx.response.body = result;
-  } else if (option === 'group-ref_id-by-ref_id2-tag-category-status') {
+  } else if (option === "group-ref_id-by-ref_id2-tag-category-status") {
     // 指定接收方的已读/未读消息，按发送方分组，用于列表页
     const sql = `
     select ref_id, ref_id2, detail->>'$.tag' tag, detail->>'$.status' status, max(id) id
@@ -202,7 +202,7 @@ router.get('/message', async (ctx) => {
     ];
     const [result] = await client.execute(sql, param);
     ctx.response.body = result;
-  } else if (option === 'group-ref_id-by-ref_id2-tag-category-exclude_list') {
+  } else if (option === "group-ref_id-by-ref_id2-tag-category-exclude_list") {
     // 指定接收方的已读未回消息(排除指定接收方的未读消息的ref_id)，按发送方分组，用于列表页
     const sql = `
     select ref_id, ref_id2, detail->>'$.tag' tag, detail->>'$.status' status
@@ -223,7 +223,7 @@ router.get('/message', async (ctx) => {
     ];
     const [result] = await client.execute(sql, param);
     ctx.response.body = result;
-  } else if (option === 'group-ref_id2-by-ref_id-tag-category-exclude_list') {
+  } else if (option === "group-ref_id2-by-ref_id-tag-category-exclude_list") {
     // 指定发送方的消息（排除指定接收方的ref_id列表），按接收方分组，用于列表页
     const sql = `
     select ref_id, ref_id2, detail->>'$.tag' tag, detail->>'$.status' status
@@ -247,7 +247,7 @@ router.get('/message', async (ctx) => {
   }
 });
 
-router.post('/message', async (ctx) => {
+router.post("/message", async (ctx) => {
   const client = pool.promise();
   const sql = `
   insert into
