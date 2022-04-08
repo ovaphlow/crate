@@ -1,4 +1,3 @@
-// @flow
 import mysql from "mysql2";
 
 import {
@@ -9,7 +8,7 @@ import {
   PROC,
 } from "./configuration.mjs";
 
-export const pool /*: any */ = mysql.createPool({
+export const pool = mysql.createPool({
   host: DB_HOST,
   user: DB_USERNAME,
   password: DB_PASSWORD,
