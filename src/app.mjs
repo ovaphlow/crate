@@ -4,7 +4,6 @@ import helmet from "koa-helmet";
 import koaLogger from "koa-logger";
 import rewrite from "koa-rewrite";
 import Router from "@koa/router";
-
 import { logger } from "./winston.mjs";
 import {
   bulletinEndpointGet,
@@ -14,10 +13,8 @@ import {
 } from "./bulletin/bulletin-endpoint.mjs";
 import {
   miscellaneousEndpointGet,
-  miscellaneousEndpointPut,
   miscellaneousEndpointPost,
-  miscellaneousEndpointDelete,
-} from "./miscellaneous.mjs";
+} from "./miscellaneous/miscellaneous-endpoint.mjs";
 import { stagingEndpointGet } from "./staging.mjs";
 import { complexEndpointBulletinJournal } from "./complex/complex-endpoint.mjs";
 
@@ -133,9 +130,10 @@ const router = new Router({
 (() => {
   // miscellaneous
   // favorite, feedback, file, journal, message, setting
-  router.get("/simple/miscellaneous/:id", miscellaneousEndpointGet);
-  router.put("/simple/miscellaneous/:id", miscellaneousEndpointPut);
-  router.delete("/simple/miscellaneous/:id", miscellaneousEndpointDelete);
+  router.get(
+    "/simple/miscellaneous/:id/:refId/:ref1Id",
+    miscellaneousEndpointGet
+  );
   router.get("/simple/miscellaneous", miscellaneousEndpointGet);
   router.post("/simple/miscellaneous", miscellaneousEndpointPost);
 })();
