@@ -1,6 +1,7 @@
 import FlakeId from "flake-idgen";
 import { DATACENTER_ID, WORKER_ID, EPOCH } from "../configuration.mjs";
 import {
+  miscellaneousRepositoryFilter,
   miscellaneousRepositoryFilterByIdRefIdRef1Id,
   miscellaneousRepositoryFilterByTag,
   miscellaneousRepositorySave,
@@ -24,6 +25,10 @@ export const miscellaneousEndpointGet = async (ctx) => {
     } else ctx.response.body = { id: 0 };
   } else {
     const { option } = ctx.request.query;
+    if (option === "") {
+      const result = await miscellaneousRepositoryFilter();
+      ctx.response.body = result;
+    }
     if (option === "filterBy-tag") {
       const { tag, take, skip } = ctx.request.query;
       const result = await miscellaneousRepositoryFilterByTag(
@@ -44,6 +49,7 @@ export const miscellaneousEndpointPost = async (ctx) => {
   });
   const fid = flakeIdGen.next();
   const { refId, ref1Id, tag, detail } = ctx.request.body;
+  console.log(refId, ref1Id, tag, detail);
   const result = await miscellaneousRepositorySave({
     id: fid.readBigInt64BE(0),
     refId,

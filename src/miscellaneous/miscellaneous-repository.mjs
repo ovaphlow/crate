@@ -1,5 +1,15 @@
 import { pool } from "../mysql.mjs";
 
+export const miscellaneousRepositoryFilter = async () => {
+  const client = pool.promise();
+  const sql = `
+  select * from miscellaneous order by id desc limit 10
+  `;
+  const param = [];
+  const [result] = await client.execute(sql, param);
+  return result;
+}
+
 export const miscellaneousRepositoryFilterByIdRefIdRef1Id = async (data) => {
   const client = pool.promise();
   const sql = `
