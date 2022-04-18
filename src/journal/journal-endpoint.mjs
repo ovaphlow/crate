@@ -1,5 +1,4 @@
 import Router from "@koa/router";
-
 import { pool } from "../mysql.mjs";
 
 export const router = new Router({

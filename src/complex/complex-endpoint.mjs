@@ -1,10 +1,13 @@
 import { bulletinRepositoryFilter } from "../bulletin/bulletin-repository.mjs";
-import { filterByDetailRefId2DtimeRange } from "../journal/journal-repository.mjs";
+import {
+  filterByDetailRefId2DtimeRange,
+  journalRepositoryFilterByDetailDtimeRangeRefId2s
+} from "../journal/journal-repository.mjs";
 
 export const complexEndpointBulletinJournal = async (ctx) => {
   const { option } = ctx.request.query;
   if (option === "statsBulletin") {
-    const { bulletinId } = ctx.request.query;
+    const { bulletinId, refId2s } = ctx.request.query;
     if (!bulletinId > 0) {
       ctx.response.stauts = 400;
       return;
@@ -34,11 +37,11 @@ export const complexEndpointBulletinJournal = async (ctx) => {
         a.push(v.ref_id);
       }
     });
-    const result2 = await filterByDetailRefId2DtimeRange({
+    const result2 = await journalRepositoryFilterByDetailDtimeRangeRefId2s({
       detail: JSON.stringify({ category: "参加招聘会并投递简历" }),
       dtimeEnd: bulletinList[0].expire_at,
       dtimeBegin: bulletinList[0].publish_time,
-      refId2: bulletinId,
+      refId2s,
     });
     ctx.response.body = {
       qty: result.length + result1.length,

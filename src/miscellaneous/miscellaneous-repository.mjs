@@ -8,7 +8,7 @@ export const miscellaneousRepositoryFilter = async () => {
   const param = [];
   const [result] = await client.execute(sql, param);
   return result;
-}
+};
 
 export const miscellaneousRepositoryFilterByIdRefIdRef1Id = async (data) => {
   const client = pool.promise();

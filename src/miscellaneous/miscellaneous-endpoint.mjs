@@ -56,7 +56,7 @@ export const miscellaneousEndpointPost = async (ctx) => {
     ref1Id,
     publishTime: new Date(),
     tag,
-    detail
+    detail,
   });
   if (result.affectedRows) ctx.response.status = 201;
   else ctx.response.status = 400;
