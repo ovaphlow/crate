@@ -55,6 +55,27 @@ router.patch("/api/miscellaneous/simple/file/:id", async (ctx) => {
   }
 });
 
+router.delete("/api/miscellaneous/simple/file/:id", async (ctx) => {
+  const { option } = ctx.request.query;
+  if (option === "removeBy-refId") {
+    const { id } = ctx.params;
+    const result = await removeByRefId(id);
+    if (result.affectedRows) {
+      ctx.response.status = 200;
+    } else {
+      ctx.response.status = 400;
+    }
+  }
+})
+
+export const removeByRefId = async (refId) => {
+  const client = pool.promise();
+  const sql = "delete from file where ref_id = ?";
+  const param = [refId];
+  const [result] = await client.execute(sql, param);
+  return result;
+}
+
 export const updateFile = async (data) => {
   const client = pool.promise();
   const sql = `
