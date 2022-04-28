@@ -2,7 +2,7 @@ import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import helmet from "koa-helmet";
 import koaLogger from "koa-logger";
-// import rewrite from "koa-rewrite";
+import rewrite from "koa-rewrite";
 import Router from "@koa/router";
 import { logger } from "./winston.mjs";
 import {
@@ -24,9 +24,9 @@ app.use(helmet());
 
 app.use(bodyParser({ jsonLimit: "16mb" }));
 
-// app.use(
-//   rewrite(/^\/api\/miscellaneous\/setting(.*)/, "/api/crate/single/setting$1")
-// );
+app.use(
+  rewrite(/^\/api\/miscellaneous\/setting(.*)/, "/api/crate/single/setting$1")
+);
 
 // eslint-disable-next-line
 app.use(

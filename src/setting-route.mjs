@@ -1,5 +1,4 @@
 import Router from "@koa/router";
-
 import { pool } from "./mysql.mjs";
 
 export const router = new Router({
@@ -14,7 +13,7 @@ router.get("/setting", async (ctx) => {
     select id
         , category
         , ref_id
-        , ref_id2
+        , ref1_id
         , detail->>'$.uuid' uuid
         , detail->>'$.name' name
     from setting
@@ -28,7 +27,7 @@ router.get("/setting", async (ctx) => {
     select id
         , category
         , ref_id
-        , ref_id2
+        , ref1_id
         , detail->>'$.uuid' uuid
         , detail->>'$.name' name
     from setting
