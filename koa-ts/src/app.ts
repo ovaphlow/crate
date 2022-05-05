@@ -20,6 +20,12 @@ app.on("error", (err: Error, ctx: Context) => {
 const router = new Router();
 
 (() => {
+  import("./bulletin/endpoint").then(({ get }) => {
+    router.get("/crate-api/bulletin", get);
+  });
+})();
+
+(() => {
   import("./setting/endpoint").then(({ endpointGet }) => {
     router.get("/crate-api/setting", endpointGet);
   });
