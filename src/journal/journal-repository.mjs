@@ -14,7 +14,9 @@ export const filterByDetailRefId2DtimeRange = async (data) => {
   return result;
 };
 
-export const journalRepositoryFilterByDetailDtimeRangeRefId2s = async (data) => {
+export const journalRepositoryFilterByDetailDtimeRangeRefId2s = async (
+  data
+) => {
   const client = pool.promise();
   const sql = `
   select *

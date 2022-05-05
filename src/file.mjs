@@ -66,7 +66,7 @@ router.delete("/api/miscellaneous/simple/file/:id", async (ctx) => {
       ctx.response.status = 400;
     }
   }
-})
+});
 
 export const removeByRefId = async (refId) => {
   const client = pool.promise();
@@ -74,7 +74,7 @@ export const removeByRefId = async (refId) => {
   const param = [refId];
   const [result] = await client.execute(sql, param);
   return result;
-}
+};
 
 export const updateFile = async (data) => {
   const client = pool.promise();

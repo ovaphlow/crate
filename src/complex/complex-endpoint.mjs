@@ -1,7 +1,7 @@
 import { bulletinRepositoryFilter } from "../bulletin/bulletin-repository.mjs";
 import {
   filterByDetailRefId2DtimeRange,
-  journalRepositoryFilterByDetailDtimeRangeRefId2s
+  journalRepositoryFilterByDetailDtimeRangeRefId2s,
 } from "../journal/journal-repository.mjs";
 
 export const complexEndpointBulletinJournal = async (ctx) => {

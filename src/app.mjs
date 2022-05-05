@@ -28,18 +28,11 @@ app.use(
   rewrite(/^\/api\/miscellaneous\/setting(.*)/, "/api/crate/single/setting$1")
 );
 
-// eslint-disable-next-line
 app.use(
   koaLogger((str, args) => {
-    logger.debug(str);
+    logger.debug(str, args);
   })
 );
-
-// app.use(async (ctx, next) => {
-//   logger.info(`--> ${ctx.request.method} ${ctx.request.url}`);
-//   await next();
-//   logger.info(`<-- ${ctx.request.method} ${ctx.request.url}`);
-// });
 
 app.on("error", (err, ctx) => {
   logger.error(`${ctx.req.method} ${ctx.req.url}`);
@@ -110,39 +103,43 @@ app.on("error", (err, ctx) => {
   });
 })();
 
-const router = new Router({
-  prefix: "/api",
-});
+const router = new Router();
 
 (() => {
-  router.get("/complex/bulletin-journal", complexEndpointBulletinJournal);
+  router.get("/api/complex/bulletin-journal", complexEndpointBulletinJournal);
 })();
 
 (() => {
   // bulletin
-  router.get("/simple/bulletin/:id", bulletinEndpointGet);
-  router.put("/simple/bulletin/:id", bulletinEndpointPut);
-  router.delete("/simple/bulletin/:id", bulletinEndpointDelete);
-  router.get("/simple/bulletin", bulletinEndpointGet);
-  router.post("/simple/bulletin", bulletinEndpointPost);
+  router.get("/api/simple/bulletin/:id", bulletinEndpointGet);
+  router.put("/api/simple/bulletin/:id", bulletinEndpointPut);
+  router.delete("/api/simple/bulletin/:id", bulletinEndpointDelete);
+  router.get("/api/simple/bulletin", bulletinEndpointGet);
+  router.post("/api/simple/bulletin", bulletinEndpointPost);
 })();
 
 (() => {
   // miscellaneous
   // favorite, feedback, file, journal, message, setting
   router.get(
-    "/simple/miscellaneous/:id/:refId/:ref1Id",
+    "/api/simple/miscellaneous/:id/:refId/:ref1Id",
     miscellaneousEndpointGet
   );
-  router.get("/simple/miscellaneous", miscellaneousEndpointGet);
-  router.post("/simple/miscellaneous", miscellaneousEndpointPost);
+  router.get("/api/simple/miscellaneous", miscellaneousEndpointGet);
+  router.post("/api/simple/miscellaneous", miscellaneousEndpointPost);
+})();
+
+(() => {
+  import("./setting-route.mjs").then(({ endpointGet }) => {
+    router.get("/crate-api/setting", endpointGet);
+  });
 })();
 
 (() => {
   // staging
   // captcha
-  router.get("/simple/staging/:id", stagingEndpointGet);
-  router.get("/simple/staging", stagingEndpointGet);
+  router.get("/api/simple/staging/:id", stagingEndpointGet);
+  router.get("/api/simple/staging", stagingEndpointGet);
 })();
 
 app.use(router.routes());
