@@ -47,107 +47,98 @@ from billboard.job_fair;
 */
 
 export const bulletinRepositoryFilter = async (option, data) => {
-  const client = pool.promise();
-  if (option === "") {
-    const sql = `
-    select cast(id as char) id, title, publish_time, expire_at, tag, detail
-    from bulletin
-    order by publish_time desc, expire_at desc
-    limit ${data.skip}, ${data.take}
-    `;
-    const [result] = await client.execute(sql, []);
-    return result;
-  }
-  if (option === "filterBy-id") {
-    const sql = `
-    select cast(id as char) id, title, publish_time, expire_at, tag, detail
-    from bulletin
-    where id = ?
-    `;
-    const param = [data.id];
-    const [result] = await client.execute(sql, param);
-    return result;
-  }
-  if (option === "filterBy-tag") {
-    const sql = `
-    select cast(id as char) id, title, publish_time, expire_at, tag, detail
-    from bulletin
-    where json_contains(tag, ?)
-    order by publish_time desc
-    limit ${data.skip}, ${data.take}
-    `;
-    const param = [data.tag];
-    const [result] = await client.execute(sql, param);
-    return result;
-  }
-  if (option === "filterBy-tag-detail") {
-    const sql = `
-    select cast(id as char) id, title, publish_time, expire_at, tag, detail
-    from bulletin
-    where json_contains(tag, ?)
-        and json_contains(detail, ?)
-    order by publish_time desc
-    limit ${data.skip}, ${data.take}
-    `;
-    const param = [data.tag, data.detail];
-    const [result] = await client.execute(sql, param);
-    return result;
-  }
-  if (option === "statsBy-today-total") {
-    const sql = `
+    const client = pool.promise();
+    if (option === "") {
+        const sql = `
+        select cast(id as char) id, title, publish_time, expire_at, tag, detail
+        from bulletin
+        order by publish_time desc, expire_at desc
+        limit ${data.skip}, ${data.take}
+        `;
+        const [result] = await client.execute(sql, []);
+        return result;
+    }
+    if (option === "filterBy-id") {
+        const sql = `
+        select cast(id as char) id, title, publish_time, expire_at, tag, detail
+        from bulletin
+        where id = ?
+        `;
+        const param = [data.id];
+        const [result] = await client.execute(sql, param);
+        return result;
+    }
+    if (option === "filterBy-tag") {
+        const sql = `
+        select cast(id as char) id, title, publish_time, expire_at, tag, detail
+        from bulletin
+        where json_contains(tag, ?)
+        order by publish_time desc
+        limit ${data.skip}, ${data.take}
+        `;
+        const param = [data.tag];
+        const [result] = await client.execute(sql, param);
+        return result;
+    }
+    if (option === "filterBy-tag-detail") {
+        const sql = `
+        select cast(id as char) id, title, publish_time, expire_at, tag, detail
+        from bulletin
+        where json_contains(tag, ?)
+            and json_contains(detail, ?)
+        order by publish_time desc
+        limit ${data.skip}, ${data.take}
+        `;
+        const param = [data.tag, data.detail];
+        const [result] = await client.execute(sql, param);
+        return result;
+    }
+    if (option === "statsBy-today-total") {
+        const sql = `
 		select (select count(*) from bulletin where json_contains(tag, ?) = true) total
         , (select count(*) from bulletin where position(? in publish_time) > 0 and json_contains(tag, ?) = true) today
-    `;
-    const param = [data.tag, data.date, data.tag];
-    const [result] = await client.execute(sql, param);
-    return result;
-  }
-  return [];
+        `;
+        const param = [data.tag, data.date, data.tag];
+        const [result] = await client.execute(sql, param);
+        return result;
+    }
+    return [];
 };
 
 export const bulletinRepositoryUpdate = async (data) => {
-  const client = pool.promise();
-  const sql = `
-  update bulletin
-  set title = ?, publish_time = ?, expire_at = ?, tag = ?, detail = ?
-  where id = ?
-  `;
-  const param = [
-    data.title,
-    data.publishTime,
-    data.expireAt,
-    data.tag,
-    data.detail,
-    data.id,
-  ];
-  const [result] = await client.execute(sql, param);
-  return result;
+    const client = pool.promise();
+    const sql = `
+    update bulletin
+    set title = ?, publish_time = ?, expire_at = ?, tag = ?, detail = ?
+    where id = ?
+    `;
+    const param = [data.title, data.publishTime, data.expireAt, data.tag, data.detail, data.id];
+    const [result] = await client.execute(sql, param);
+    return result;
 };
 
 export const bulletinRepositoryRemove = async (data) => {
-  const client = pool.promise();
-  const sql = `
-  delete from bulletin where id = ?
-  `;
-  const param = [data.id];
-  const [result] = await client.execute(sql, param);
-  return result;
+    const client = pool.promise();
+    const sql = "delete from bulletin where id = ?";
+    const param = [data.id];
+    const [result] = await client.execute(sql, param);
+    return result;
 };
 
 export const bulletinRepositorySave = async (data) => {
-  const client = pool.promise();
-  const sql = `
-  insert into bulletin (id, title, publish_time, expire_at, tag, detail)
-      values (?, ?, ?, ?, ?, ?)
-  `;
-  const param = [
-    data.id,
-    data.title,
-    data.publishTime,
-    data.expireAt,
-    data.tag || "{}", // json格式不允许有默认值，所以在没传数据的情况下要赋一个默认值'{}'
-    data.detail || "{}",
-  ];
-  const [result] = await client.execute(sql, param);
-  return result;
+    const client = pool.promise();
+    const sql = `
+    insert into bulletin (id, title, publish_time, expire_at, tag, detail)
+        values (?, ?, ?, ?, ?, ?)
+    `;
+    const param = [
+        data.id,
+        data.title,
+        data.publishTime,
+        data.expireAt,
+        data.tag || "{}", // json格式不允许有默认值，所以在没传数据的情况下要赋一个默认值'{}'
+        data.detail || "{}",
+    ];
+    const [result] = await client.execute(sql, param);
+    return result;
 };
