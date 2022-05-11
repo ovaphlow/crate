@@ -1,6 +1,50 @@
 import Router from "@koa/router";
-
 import { pool } from "./mysql.mjs";
+import {
+    filterByDetailRefIdRef1IdTimeRange,
+    filterByDetailRef1IdTimeRangeGroupByRefId,
+    filterByDetailRef1IdTimeRange,
+} from "./message-repository.mjs";
+
+export const get = async (ctx) => {
+    const { option } = ctx.request.query;
+    if (option === "filterBy-detail-ref1Id-timeRange") {
+        const { ref1Id, detail, timeBegin, timeEnd } = ctx.request.query;
+        const result = await filterByDetailRef1IdTimeRange(
+            ref1Id,
+            timeBegin,
+            timeEnd,
+            detail,
+            false
+        );
+        ctx.response.body = result;
+        return;
+    }
+    if (option === "filterBy-detail-ref1Id-timeRange-groupBy-refId") {
+        const { ref1Id, detail, timeBegin, timeEnd } = ctx.request.query;
+        const result = await filterByDetailRef1IdTimeRangeGroupByRefId(
+            ref1Id,
+            timeBegin,
+            timeEnd,
+            detail
+        );
+        ctx.response.body = result;
+        return;
+    }
+    if (option === "filterBy-detail-refId-ref1Id-timeRange") {
+        const { refId, ref1Id, detail, timeBegin, timeEnd } = ctx.request.query;
+        const result = await filterByDetailRefIdRef1IdTimeRange(
+            refId,
+            ref1Id,
+            timeBegin,
+            timeEnd,
+            detail,
+            false
+        );
+        ctx.response.body = result;
+        return;
+    }
+};
 
 export const router = new Router({
     prefix: "/api/miscellaneous",

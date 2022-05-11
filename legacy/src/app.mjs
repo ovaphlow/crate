@@ -117,6 +117,12 @@ const router = new Router();
 })();
 
 (() => {
+    import("./message-route.mjs").then(({ get }) => {
+        router.get("/crate-api/message", get);
+    });
+})();
+
+(() => {
     // miscellaneous
     // favorite, feedback, file, journal, message, setting
     router.get("/api/simple/miscellaneous/:id/:refId/:ref1Id", miscellaneousEndpointGet);
