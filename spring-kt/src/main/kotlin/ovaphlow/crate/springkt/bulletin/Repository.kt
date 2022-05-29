@@ -1,12 +1,10 @@
 package ovaphlow.crate.springkt.bulletin
 
 import org.springframework.data.annotation.Id
-import org.springframework.data.jdbc.repository.query.Query
-import org.springframework.data.relational.core.mapping.Table
-import org.springframework.data.repository.CrudRepository
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
-@Table("bulletin")
 data class Bulletin(
     @Id val id: String,
     val title: String,
@@ -16,13 +14,36 @@ data class Bulletin(
     val detail: String
 )
 
-interface Repository : CrudRepository<Bulletin, String> {
-    @Query(
-        """
-        select cast(id as char) id, title, publish_time, expire_at, tag, detail from bulletin
+@Repository
+class Repository(
+    private val jdbcTemplate: JdbcTemplate
+) {
+    fun filter(take: Int, skip: Long): List<Bulletin> {
+        val q = """
+        select cast(id as char) id, title, publish_time, expire_at, tag, detail
+        from bulletin
         order by publish_time desc
-        limit :skip, :take
-        """
-    )
-    fun filter(take: Int, skip: Long): List<Bulletin>
+        limit ?, ?
+        """.trimIndent()
+        val result = jdbcTemplate.query(q, arrayOf(skip, take)) { rs, _ ->
+            Bulletin(
+                rs.getString("id"),
+                rs.getString("title"),
+                rs.getTimestamp("publish_time").toLocalDateTime(),
+                rs.getTimestamp("expire_at").toLocalDateTime(),
+                rs.getString("tag"),
+                rs.getString("detail")
+            )
+        }
+        return result
+    }
+
+    fun save(data: Bulletin) {
+        val q = """
+        insert into bulletin (
+            id, title, publish_time, expire_at, tag, detail
+        ) values (?, ?, ?, ?, ?, ?)
+        """.trimIndent()
+        jdbcTemplate.update(q, data.id, data.title, data.publishTime, data.expireAt, data.tag, data.detail)
+    }
 }

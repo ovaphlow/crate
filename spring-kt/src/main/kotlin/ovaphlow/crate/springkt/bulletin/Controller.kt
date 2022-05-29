@@ -20,6 +20,7 @@ class Controller(
         @RequestParam(value = "take", defaultValue = "10") take: Int,
         @RequestParam(value = "skip", defaultValue = "0") skip: Long
     ): ResponseEntity<List<Bulletin>> {
+//        return ResponseEntity.status(200).body(repository.filter(take, skip))
         return ResponseEntity.status(200).body(repository.filter(take, skip))
     }
 
