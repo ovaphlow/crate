@@ -4,7 +4,7 @@ import helmet from "koa-helmet";
 import koaLogger from "koa-logger";
 import rewrite from "koa-rewrite";
 import Router from "@koa/router";
-import { logger } from "./winston.mjs";
+import { logger } from "./logger-pino.mjs";
 import {
     bulletinEndpointGet,
     bulletinEndpointPost,

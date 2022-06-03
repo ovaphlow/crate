@@ -21,17 +21,17 @@ const router = new Router();
 
 (() => {
     import("./bulletin/endpoint").then(({ endpointDelete, get, getWithResourceId, put, post }) => {
-        router.get("/crate-api/koa-ts/bulletin/:uuid/:id", getWithResourceId);
-        router.put("/crate-api/koa-ts/bulletin/:uuid/:id", put);
-        router.delete("/crate-api/koa-ts/bulletin/:id", endpointDelete);
-        router.get("/crate-api/koa-ts/bulletin", get);
-        router.post("/crate-api/koa-ts/bulletin", post);
+        router.get("/crate-api/bulletin/:uuid/:id", getWithResourceId);
+        router.put("/crate-api/bulletin/:uuid/:id", put);
+        router.delete("/crate-api/bulletin/:id", endpointDelete);
+        router.get("/crate-api/bulletin", get);
+        router.post("/crate-api/bulletin", post);
     });
 })();
 
 (() => {
     import("./setting/endpoint").then(({ get }) => {
-        router.get("/crate-api/koa-ts/setting", get);
+        router.get("/crate-api/setting", get);
     });
 })();
 

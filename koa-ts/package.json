@@ -39,10 +39,10 @@
     "uuid": "^8.3.2"
   },
   "scripts": {
-    "dev": "nodemon src/server.ts | pino-pretty",
-    "serve": "node dist/server.js | pino",
+    "dev": "nodemon src/server.ts | pino-pretty -c -t -L debug",
+    "serve": "node dist/server.js | pino-pretty -c -t -L info",
+    "ts:build": "tsc",
     "format": "prettier --tab-width 4 --print-width 100 --write src *.js",
-    "lint": "eslint --fix src/*.ts *.js",
-    "ts:build": "tsc"
+    "lint": "eslint --fix src/*.ts *.js"
   }
 }

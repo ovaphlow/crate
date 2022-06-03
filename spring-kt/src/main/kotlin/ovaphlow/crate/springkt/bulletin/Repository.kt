@@ -20,10 +20,10 @@ class Repository(
 ) {
     fun filter(take: Int, skip: Long): List<Bulletin> {
         val q = """
-        select cast(id as char) id, title, publish_time, expire_at, tag, detail
-        from bulletin
-        order by publish_time desc
-        limit ?, ?
+            select cast(id as char) id, title, publish_time, expire_at, tag, detail
+            from bulletin
+            order by publish_time desc
+            limit ?, ?
         """.trimIndent()
         val result = jdbcTemplate.query(q, arrayOf(skip, take)) { rs, _ ->
             Bulletin(
@@ -38,11 +38,30 @@ class Repository(
         return result
     }
 
+    fun filterByIdDetail(id: String, detail: String): Bulletin {
+        val q = """
+            select cast(id as char) id, title, publish_time, expire_at, tag, detail
+            from bulletin
+            where id = ? and json_contains(detail, ?)
+        """.trimIndent()
+        val result = jdbcTemplate.queryForObject(q, arrayOf(id, detail)) { rs, _ ->
+            Bulletin(
+                rs.getString("id"),
+                rs.getString("title"),
+                rs.getTimestamp("publish_time").toLocalDateTime(),
+                rs.getTimestamp("expire_at").toLocalDateTime(),
+                rs.getString("tag"),
+                rs.getString("detail")
+            )
+        }
+        return result!!
+    }
+
     fun save(data: Bulletin) {
         val q = """
-        insert into bulletin (
-            id, title, publish_time, expire_at, tag, detail
-        ) values (?, ?, ?, ?, ?, ?)
+            insert into bulletin (
+                id, title, publish_time, expire_at, tag, detail
+            ) values (?, ?, ?, ?, ?, ?)
         """.trimIndent()
         jdbcTemplate.update(q, data.id, data.title, data.publishTime, data.expireAt, data.tag, data.detail)
     }
