@@ -66,7 +66,7 @@ router.get("/miscellaneous/journal", async (ctx) => {
         from logbook
         where ref_id = ?
             and dtime between ? and ?
-            and detail->>'$.tag' = ?
+            and position(? in detail->>'$.tag') > 0
         order by id desc
         limit 100
         `;
