@@ -3,7 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@koa/multer': ^3.0.0
   '@koa/router': ^10.1.1
-  dayjs: ^1.11.1
+  dayjs: ^1.11.3
   dotenv: ^16.0.0
   eslint: ^8.17.0
   eslint-config-prettier: ^8.5.0
@@ -22,14 +22,14 @@ specifiers:
   nodemon: ^2.0.15
   pino: ^8.0.0
   pino-pretty: ^8.0.0
-  prettier: ^2.6.2
+  prettier: ^2.7.0
   uuid: ^8.3.2
   winston: ^3.7.2
 
 dependencies:
   '@koa/multer': 3.0.0_multer@1.4.5-lts.1
   '@koa/router': 10.1.1
-  dayjs: 1.11.2
+  dayjs: 1.11.3
   dotenv: 16.0.1
   flake-idgen: 1.4.0
   jose: 4.8.1
@@ -52,7 +52,7 @@ devDependencies:
   eslint-plugin-import: 2.26.0_eslint@8.17.0
   multer: 1.4.5-lts.1
   nodemon: 2.0.16
-  prettier: 2.6.2
+  prettier: 2.7.0
 
 packages:
 
@@ -543,8 +543,8 @@ packages:
     resolution: {integrity: sha512-2P0p0pFGzHS5EMnhdxQi7aJN+iMheud0UhG4dlE1DLAlvL8JHjJJTX/CSm4JXwV0Ka5nGk3zC5mcb5bUQUxxMA==}
     dev: false
 
-  /dayjs/1.11.2:
-    resolution: {integrity: sha512-F4LXf1OeU9hrSYRPTTj/6FbO4HTjPKXvEIC1P2kcnFurViINCVk3ZV0xAS3XVx9MkMsXbbqlK6hjseaYbgKEHw==}
+  /dayjs/1.11.3:
+    resolution: {integrity: sha512-xxwlswWOlGhzgQ4TKzASQkUhqERI3egRNqgV4ScR8wlANA/A9tZ7miXa44vTTKEq5l7vWoL5G57bG3zA+Kow0A==}
     dev: false
 
   /debug/2.6.9:
@@ -2043,8 +2043,8 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /prettier/2.6.2:
-    resolution: {integrity: sha512-PkUpF+qoXTqhOeWL9fu7As8LXsIUZ1WYaJiY/a7McAQzxjk82OF0tibkFXVCDImZtWxbvojFjerkiLb0/q8mew==}
+  /prettier/2.7.0:
+    resolution: {integrity: sha512-nwoX4GMFgxoPC6diHvSwmK/4yU8FFH3V8XWtLQrbj4IBsK2pkYhG4kf/ljF/haaZ/aii+wNJqISrCDPgxGWDVQ==}
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: true
