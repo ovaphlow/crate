@@ -8,6 +8,6 @@ export const pool = mysql.createPool({
     password: DB_PASSWORD,
     database: DB_NAME,
     waitForConnections: true,
-    connectionLimit: PROC * 2 + 1,
+    // connectionLimit: PROC * 2 + 1, // 默认10
     queueLimit: 0,
 });
