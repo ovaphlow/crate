@@ -3,7 +3,6 @@ import bodyParser from "koa-bodyparser";
 import helmet from "koa-helmet";
 import Router from "@koa/router";
 import pino from "koa-pino-logger";
-import path from "path";
 
 export const app = new Koa();
 
