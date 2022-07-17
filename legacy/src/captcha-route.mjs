@@ -20,7 +20,7 @@ router.get("/captcha", async (ctx) => {
 });
 
 router.post("/captcha", async (ctx) => {
-    const r = Math.floor(Math.random() * (999999 - 100000) + 100000);
+    const r = Math.floor(Math.random() * (999999 - 100000) + 100000).toFixed(0);
     repository.save({
         email: ctx.request.body.email || "",
         tag: ctx.request.body.tag || "",
