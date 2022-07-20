@@ -246,7 +246,7 @@ router.get("/message", async (ctx) => {
         from ovaphlow.message t
         where ref_id2 = ? and detail->>'$.tag' = ?
             and detail->>'$.category' = ?
-            and ref_id not in (${ctx.request.query.list})
+            and ref_id not in (${ctx.request.query.list || 0})
         group by ref_id
         order by dtime desc
         limit 100
@@ -267,7 +267,7 @@ router.get("/message", async (ctx) => {
         from ovaphlow.message t
         where ref_id = ? and detail->>'$.tag' = ?
             and detail->>'$.category' = ?
-            and ref_id2 not in (${ctx.request.query.list})
+            and ref_id2 not in (${ctx.request.query.list || 0})
         group by ref_id2
         order by dtime desc
         limit 100
