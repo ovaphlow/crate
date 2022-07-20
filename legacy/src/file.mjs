@@ -16,10 +16,16 @@ const upload = multer({
 
 export const getFile = async (option, data) => {
     if (option === "by-ref") {
+        console.log(data);
         const client = pool.promise();
-        const sql = "select * from file where ref_id = ?";
+        const sql = `
+        select cast(id as char) id, ref_id, tag, detail
+        from file
+        where ref_id = ?
+        `;
         const param = [data.refId];
         const [result] = await client.execute(sql, param);
+        console.log(result);
         return result;
     }
     return [];
@@ -29,9 +35,9 @@ router.get("/api/miscellaneous/simple/file/:id", async (ctx) => {
     const { option } = ctx.request.query;
     if (option === "by-ref") {
         const result = await getFile(option, {
-            refId: parseInt(ctx.params.id, 10),
+            refId: ctx.params.id,
         });
-        if (result.length === 1) {
+        if (result.length > 0) {
             ctx.response.set("content-disposition", `attachment;filename=${result[0].id}.pdf`);
             ctx.response.body = fs.readFileSync(
                 path.resolve("..", "upload", `${result[0].id}.pdf`)
@@ -95,7 +101,7 @@ export const saveFile = async (data) => {
 
 router.post("/api/miscellaneous/simple/file", upload.single("resume"), async (ctx) => {
     const { refId } = ctx.request.body;
-    const result = await getFile("by-ref", { refId: parseInt(refId, 10) });
+    const result = await getFile("by-ref", { refId });
     if (result.length === 0) {
         const flakeIdGen = new FlakeId({
             datacenter: DATACENTER_ID,
