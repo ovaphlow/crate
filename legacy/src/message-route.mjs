@@ -112,7 +112,7 @@ router.put("/message/:id", async (ctx) => {
         update message
         set detail = json_set(detail, '$.status', ?)
         where ref_id2 = ?
-            and id in (${ctx.request.body.id_list})
+            and id in (${ctx.request.body.id_list || 0})
         `;
         const param = [ctx.request.body.status, parseInt(ctx.params.id, 10)];
         const [result] = await client.execute(sql, param);
