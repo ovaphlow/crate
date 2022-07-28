@@ -1,7 +1,7 @@
 import cluster, { isMaster } from "cluster";
 import http from "http";
 
-import { logger } from "./winston.mjs";
+import { logger } from "./logger-pino.mjs";
 
 import("dotenv").then((dotenv) => dotenv.config());
 

@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 
 import { repository } from "./captcha-repository.mjs";
 import { EMAIL_SERVICE, EMAIL_USERNAME, EMAIL_PASSWORD } from "./configuration.mjs";
-import { logger } from "./winston.mjs";
+import { logger } from "./logger-pino.mjs";
 
 export const router = new Router({
     prefix: "/api/miscellaneous",
