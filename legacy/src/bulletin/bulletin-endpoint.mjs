@@ -1,5 +1,3 @@
-import FlakeId from "flake-idgen";
-
 import { DATACENTER_ID, WORKER_ID, EPOCH } from "../configuration.mjs";
 import {
     bulletinRepositoryFilter,
@@ -7,6 +5,8 @@ import {
     bulletinRepositoryRemove,
     bulletinRepositorySave,
 } from "./bulletin-repository.mjs";
+import dayjs from "dayjs";
+import FlakeId from "flake-idgen";
 
 export const bulletinEndpointGet = async (ctx) => {
     const { id } = ctx.params;

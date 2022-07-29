@@ -14,7 +14,6 @@
     "dayjs": "^1.11.4",
     "dotenv": "^16.0.0",
     "flake-idgen": "^1.4.0",
-    "jose": "^4.8.3",
     "json-bigint": "^1.0.0",
     "koa": "^2.13.4",
     "koa-bodyparser": "^4.3.0",

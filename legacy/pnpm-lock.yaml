@@ -9,7 +9,6 @@ specifiers:
   eslint-config-prettier: ^8.5.0
   eslint-plugin-import: ^2.26.0
   flake-idgen: ^1.4.0
-  jose: ^4.8.3
   json-bigint: ^1.0.0
   koa: ^2.13.4
   koa-bodyparser: ^4.3.0
@@ -31,7 +30,6 @@ dependencies:
   dayjs: 1.11.4
   dotenv: 16.0.1
   flake-idgen: 1.4.0
-  jose: 4.8.3
   json-bigint: 1.0.0
   koa: 2.13.4
   koa-bodyparser: 4.3.0
@@ -1185,10 +1183,6 @@ packages:
   /isexe/2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
     dev: true
-
-  /jose/4.8.3:
-    resolution: {integrity: sha512-7rySkpW78d8LBp4YU70Wb7+OTgE3OwAALNVZxhoIhp4Kscp+p/fBkdpxGAMKxvCAMV4QfXBU9m6l9nX/vGwd2g==}
-    dev: false
 
   /joycon/3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}

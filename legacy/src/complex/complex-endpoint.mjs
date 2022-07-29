@@ -32,7 +32,7 @@ export const complexEndpointBulletinJournal = async (ctx) => {
             refId2: bulletinId,
         });
         const a = [];
-        result.forEach((v, i) => {
+        result.forEach((v) => {
             if (a.indexOf(v.ref_id) === -1) {
                 a.push(v.ref_id);
             }
