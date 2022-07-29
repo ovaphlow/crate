@@ -39,7 +39,6 @@ app.on("error", (err, ctx) => {
 
 (() => {
     import("./captcha-route.mjs").then(({ router }) => {
-        logger.info("加载 captcha ...");
         app.use(router.routes());
         app.use(router.allowedMethods());
     });
@@ -47,7 +46,6 @@ app.on("error", (err, ctx) => {
 
 (() => {
     import("./favorite-route.mjs").then(({ router }) => {
-        logger.info("加载 favorite ...");
         app.use(router.routes());
         app.use(router.allowedMethods());
     });
@@ -55,7 +53,6 @@ app.on("error", (err, ctx) => {
 
 (() => {
     import("./feedback-route.mjs").then(({ router }) => {
-        logger.info("加载 feedback ...");
         app.use(router.routes());
         app.use(router.allowedMethods());
     });
@@ -63,7 +60,6 @@ app.on("error", (err, ctx) => {
 
 (() => {
     import("./file.mjs").then(({ router }) => {
-        logger.info("加载 file ...");
         app.use(router.routes());
         app.use(router.allowedMethods());
     });
@@ -71,7 +67,6 @@ app.on("error", (err, ctx) => {
 
 (() => {
     import("./journal/journal-endpoint.mjs").then(({ router }) => {
-        logger.info("加载 journal ...");
         app.use(router.routes());
         app.use(router.allowedMethods());
     });
@@ -79,7 +74,6 @@ app.on("error", (err, ctx) => {
 
 (() => {
     import("./message-route.mjs").then(({ router }) => {
-        logger.info("加载 message ...");
         app.use(router.routes());
         app.use(router.allowedMethods());
     });
@@ -87,7 +81,6 @@ app.on("error", (err, ctx) => {
 
 (() => {
     import("./setting-route.mjs").then(({ router }) => {
-        logger.info("加载 setting ...");
         app.use(router.routes());
         app.use(router.allowedMethods());
     });
@@ -95,7 +88,6 @@ app.on("error", (err, ctx) => {
 
 (() => {
     import("./subscriber-route.mjs").then(({ router }) => {
-        logger.info("加载 subscriber ...");
         app.use(router.routes());
         app.use(router.allowedMethods());
     });
@@ -114,6 +106,16 @@ const router = new Router();
     router.delete("/api/simple/bulletin/:id", bulletinEndpointDelete);
     router.get("/api/simple/bulletin", bulletinEndpointGet);
     router.post("/api/simple/bulletin", bulletinEndpointPost);
+    import("./bulletin/endpoint.mjs").then(({ endpointGet }) => {
+        router.get("/crate-api/bulletin", endpointGet);
+        logger.info(`挂载 GET /crate-api/bulletin 至 bulletin/endpoint.mjs->endpointGet`);
+        router.get("/crate-api/bulletin/:uuid/:id", endpointGet);
+        logger.info(`挂载 GET /crate-api/bulletin/:uuid/:id 至 bulletin/endpoint.mjs->endpointGet`);
+    });
+    import("./bulletin/endpoint.mjs").then(({ endpointPost }) => {
+        router.post("/crate-api/bulletin", endpointPost);
+        logger.info(`挂载 POST /crate-api/bulletin 至 bulletin/endpoint.mjs->endpointPost`);
+    });
 })();
 
 (() => {
