@@ -2,6 +2,7 @@ import { DATACENTER_ID, WORKER_ID, EPOCH } from "../configuration.mjs";
 import { filter, save } from "./repository.mjs";
 import { v4 as uuid } from "uuid";
 import FlakeId from "flake-idgen";
+import { convertArray2Object } from "../utility/convertArray2Object.mjs";
 
 export const endpointGet = async (ctx) => {
     const { id } = ctx.params;
@@ -16,8 +17,26 @@ export const endpointGet = async (ctx) => {
         ctx.response.body = row || { id: 0 };
         return;
     }
-    if (option === "filterBy-publishedRange-tag") {
-
+    const { option } = ctx.request.query;
+    if (option === "filterBy-publishedAtRange-detail") {
+        const { time, time1, detail, take, skip } = ctx.request.query;
+        if (!time || !time1 || !detail) {
+            ctx.response.status = 400;
+            return;
+        }
+        if (detail.split(",").length % 2 !== 0) {
+            ctx.response.status = 400;
+            return;
+        }
+        const result = await filter(option, {
+            time,
+            time1,
+            detail: JSON.stringify(convertArray2Object(detail.split(","))),
+            take: take || 10,
+            skip: skip || 0
+        });
+        ctx.response.body = result;
+        return;
     }
     ctx.response.status = 412;
 }
