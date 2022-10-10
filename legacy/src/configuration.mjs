@@ -11,5 +11,6 @@ export const DB_PASSWORD = process.env.DB_PASSWORD || "";
 export const DB_NAME = process.env.DB_NAME || "ovaphlow";
 
 export const EMAIL_SERVICE = process.env.EMAIL_SERVICE || "qq";
-export const EMAIL_USERNAME = process.env.EMAIL_USERNAME || "longzhaopin@foxmail.com";
+export const EMAIL_USERNAME =
+  process.env.EMAIL_USERNAME || "longzhaopin@foxmail.com";
 export const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD || "";

@@ -17,14 +17,14 @@ CREATE TABLE `message` (
 const column = ["cast(id as char) id", "ref_id", "ref_id2", "dtime", "detail"];
 
 export const filterByDetailRef1IdTimeRange = async (
-    ref1Id,
-    timeBegin,
-    timeEnd,
-    detail,
-    counter
+  ref1Id,
+  timeBegin,
+  timeEnd,
+  detail,
+  counter
 ) => {
-    const client = pool.promise();
-    const sql = `
+  const client = pool.promise();
+  const sql = `
     select ${counter ? "count(*) qty" : column.join(", ")}
     from message
     where ref_id2 = ?
@@ -32,19 +32,19 @@ export const filterByDetailRef1IdTimeRange = async (
         and json_contains(detail, ?)
     order by id desc
     `;
-    const param = [ref1Id, timeBegin, timeEnd, detail];
-    const [result] = await client.execute(sql, param);
-    return result;
+  const param = [ref1Id, timeBegin, timeEnd, detail];
+  const [result] = await client.execute(sql, param);
+  return result;
 };
 
 export const filterByDetailRef1IdTimeRangeGroupByRefId = async (
-    ref1Id,
-    timeBegin,
-    timeEnd,
-    detail
+  ref1Id,
+  timeBegin,
+  timeEnd,
+  detail
 ) => {
-    const client = pool.promise();
-    const sql = `
+  const client = pool.promise();
+  const sql = `
     select ${column.join(", ")}, count(*) qty
     from (
         select *
@@ -57,21 +57,21 @@ export const filterByDetailRef1IdTimeRangeGroupByRefId = async (
         and json_contains(detail, ?)
     group by ref_id
     `;
-    const param = [ref1Id, timeBegin, timeEnd, detail];
-    const [result] = await client.execute(sql, param);
-    return result;
+  const param = [ref1Id, timeBegin, timeEnd, detail];
+  const [result] = await client.execute(sql, param);
+  return result;
 };
 
 export const filterByDetailRefIdRef1IdTimeRange = async (
-    refId,
-    ref1Id,
-    timeBegin,
-    timeEnd,
-    detail,
-    counter
+  refId,
+  ref1Id,
+  timeBegin,
+  timeEnd,
+  detail,
+  counter
 ) => {
-    const client = pool.promise();
-    const sql = `
+  const client = pool.promise();
+  const sql = `
     select ${counter ? "count(*) qty" : column.join(", ")}
     from message
     where ref_id = ?
@@ -80,21 +80,21 @@ export const filterByDetailRefIdRef1IdTimeRange = async (
         and json_contains(detail, ?)
     order by id desc
     `;
-    const param = [refId, ref1Id, timeBegin, timeEnd, detail];
-    const [result] = await client.execute(sql, param);
-    return result;
+  const param = [refId, ref1Id, timeBegin, timeEnd, detail];
+  const [result] = await client.execute(sql, param);
+  return result;
 };
 
 export const saveMessage = async (option, data) => {
-    const client = pool.promise();
-    if (option === "reply") {
-        const sql = `
+  const client = pool.promise();
+  if (option === "reply") {
+    const sql = `
         insert into message (ref_id, ref_id2, dtime, detail)
         values(0, ?, ?, ?)
         `;
-        const param = [parseInt(data.id, 10), data.dtime, data.detail];
-        const [result] = await client.execute(sql, param);
-        return result.affectedRows;
-    }
-    return 0;
+    const param = [parseInt(data.id, 10), data.dtime, data.detail];
+    const [result] = await client.execute(sql, param);
+    return result.affectedRows;
+  }
+  return 0;
 };

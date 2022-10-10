@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "nodemon src/server.mjs",
     "serve": "node src/server.mjs",
-    "format": "prettier --tab-width 4 --print-width 100 --write src *.js",
+    "format": "prettier --write src *.js",
     "lint": "eslint --fix src/*.mjs *.js"
   },
   "author": "ovaphlow@live.com",
