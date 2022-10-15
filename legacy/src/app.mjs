@@ -127,6 +127,18 @@ const router = new Router();
 })();
 
 (() => {
+  import("./email/email-endpoint.mjs").then(({ sendMail2ResetPassword }) => {
+    router.post(
+      "/crate-api/email/actions/send-mail-2-reset-password",
+      sendMail2ResetPassword
+    );
+    logger.info(
+      `挂载 GET /crate-api/email/actions/send-mail-2-reset-password 至 email/email-endpoint.mjs->sendMail2ResetPassword`
+    );
+  });
+})();
+
+(() => {
   import("./message-route.mjs").then(({ get }) => {
     router.get("/crate-api/message", get);
   });
@@ -141,6 +153,12 @@ const router = new Router();
   );
   router.get("/api/simple/miscellaneous", miscellaneousEndpointGet);
   router.post("/api/simple/miscellaneous", miscellaneousEndpointPost);
+})();
+
+(() => {
+  import("./staging.mjs").then(({ stagingEndpointGet }) => {
+    router.get("/crate-api/staging", stagingEndpointGet);
+  })
 })();
 
 (() => {

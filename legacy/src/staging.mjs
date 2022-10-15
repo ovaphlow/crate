@@ -1,8 +1,7 @@
-import FlakeId from "flake-idgen";
 import Router from "@koa/router";
 
-import { DATACENTER_ID, WORKER_ID, EPOCH } from "./configuration.mjs";
 import { pool } from "./mysql.mjs";
+import { filterByRefIdTag } from "./staging-repository.mjs";
 
 export const router = new Router();
 
@@ -28,6 +27,12 @@ export const stagingEndpointGet = async (ctx) => {
     });
     ctx.response.body = result;
   }
+  if (option === "filterBy-refId-tag") {
+    const { refId, tag } = ctx.request.query;
+    const result = await filterByRefIdTag({ refId, tag: JSON.stringify(tag.split(",")) });
+    ctx.response.body = result;
+    return;
+  }
 };
 
 // 查询数据
@@ -35,22 +40,22 @@ export const stagingRepositoryFilter = async (option, data) => {
   const client = pool.promise();
   if (option === "filterBy-id") {
     const sql = `
-        select *
-        from staging
-        where id = ?
-        `;
+    select *
+    from staging
+    where id = ?
+    `;
     const param = [data.id];
     const [result] = await client.execute(sql, param);
     return result;
   }
   if (option === "filterBy-tag") {
     const sql = `
-        select *
-        from staging
-        where json_contains(tag, ?) = true
-        order by id desc
-        limit ${data.skip}, ${data.take}
-        `;
+    select *
+    from staging
+    where json_contains(tag, ?) = true
+    order by id desc
+    limit ${data.skip}, ${data.take}
+    `;
     const param = [data.tag];
     const [result] = await client.execute(sql, param);
     return result;
