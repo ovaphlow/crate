@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { filterByRefIdTag, save, update } from "../staging-repository.mjs";
+import { filterByRefIdTagDetail, save, update } from "../staging-repository.mjs";
 
 export const sendMail2ResetPassword = async (ctx) => {
   const math = parseInt(
@@ -8,15 +8,15 @@ export const sendMail2ResetPassword = async (ctx) => {
   );
   const code = math.toString();
 
-  const { refId } = ctx.request.body;
-  const codes = await filterByRefIdTag({ refId, tag: JSON.stringify(["验证码"]) });
+  const { refId, detail } = ctx.request.body;
+  const codes = await filterByRefIdTagDetail({ refId, tag: JSON.stringify(["验证码"]), detail: JSON.stringify(detail) });
   if (codes.length > 0) {
     const [rowCode] = codes;
     const { affectedRows } = await update({
       refId,
       name: rowCode["name"],
       tag: JSON.stringify(rowCode["tag"]),
-      detail: JSON.stringify({ code }),
+      detail: JSON.stringify({ ...detail, code }),
       id: rowCode["id"]
     });
     if (affectedRows !== 1) {
@@ -28,7 +28,7 @@ export const sendMail2ResetPassword = async (ctx) => {
       refId,
       name: "",
       tag: JSON.stringify(["验证码"]),
-      detail: JSON.stringify({ code }),
+      detail: JSON.stringify({ ...detail, code }),
     });
     if (affectedRows !== 1) {
       ctx.response.status = 500;
