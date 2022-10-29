@@ -28,6 +28,20 @@ export const filterByRefIdTag = async ({ refId, tag }) => {
   const [result] = await client.query(q, param);
   return result;
 };
+export const filterByRefIdTagDetail = async ({ refId, tag, detail }) => {
+  const client = pool.promise();
+  const q = `
+  select *
+  from staging
+  where ref_id = ?
+    and json_contains(tag, ?)
+    and json_contains(detail, ?)
+  order by id desc
+  `;
+  const param = [refId, tag, detail];
+  const [result] = await client.query(q, param);
+  return result;
+};
 
 export const save = async ({ refId, name, tag, detail }) => {
   const client = pool.promise();

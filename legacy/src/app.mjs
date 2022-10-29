@@ -133,7 +133,7 @@ const router = new Router();
       sendMail2ResetPassword
     );
     logger.info(
-      `挂载 GET /crate-api/email/actions/send-mail-2-reset-password 至 email/email-endpoint.mjs->sendMail2ResetPassword`
+      `挂载 POST /crate-api/email/actions/send-mail-2-reset-password 至 email/email-endpoint.mjs->sendMail2ResetPassword`
     );
   });
 })();

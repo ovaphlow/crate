@@ -1,7 +1,7 @@
 import Router from "@koa/router";
 
 import { pool } from "./mysql.mjs";
-import { filterByRefIdTag } from "./staging-repository.mjs";
+import { filterByRefIdTagDetail } from "./staging-repository.mjs";
 
 export const router = new Router();
 
@@ -27,9 +27,9 @@ export const stagingEndpointGet = async (ctx) => {
     });
     ctx.response.body = result;
   }
-  if (option === "filterBy-refId-tag") {
-    const { refId, tag } = ctx.request.query;
-    const result = await filterByRefIdTag({ refId, tag: JSON.stringify(tag.split(",")) });
+  if (option === "filterBy-refId-tag-detail") {
+    const { refId, tag, detail } = ctx.request.query;
+    const result = await filterByRefIdTagDetail({ refId, tag: JSON.stringify(tag.split(",")), detail });
     ctx.response.body = result;
     return;
   }
